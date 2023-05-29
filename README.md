@@ -1,1 +1,1 @@
-# KOopman Object Locator Net - (KOOLNet)
+# Koopman Operator Object Locator Net - (KOOLNet)
