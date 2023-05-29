@@ -1,5 +1,8 @@
 ipython
+h5py
 matplotlib
 numpy
+pytorch
 rich
+scikit-learn
 tqdm
