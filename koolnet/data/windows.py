@@ -16,8 +16,7 @@ def get_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], 
 	wy0 = np.random.randint(obst_y + (2 * obst_r), y - win_size_y)
 
 	wx1 = wx0 + win_size_x
-	wy0 = wy0 + win_size_y
-
+	wy1 = wy0 + win_size_y
 
 	return wx0, wx1, wy0, wy1
 
