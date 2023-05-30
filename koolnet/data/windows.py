@@ -1,8 +1,7 @@
 import numpy as np
 
 
-
-def get_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], obst_pos: tuple) -> nd.array:
+def gen_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], obst_pos: tuple) -> tuple:
 	# pick a random points
 	# check if in bounds and the cylinder is not in
 	# create a padded area of padding == win_size, so guarantee to be in bounds.
@@ -28,8 +27,8 @@ def get_data_window(koop_modes: np.ndarray, window_coords: tuple[int, int, int, 
 	return koop_modes[wx0:wx1, wy0:wy1]
 
 
-def get_window_and_data(koop_modes: np.ndarray, win_size: tuple[int, int], obst_pos: tuple) -> None:
-	koop_modes_xy = koop_modes.shape[:1]
-	window_coords = get_window_coord(koop_modes_xy, win_size, obst_pos)
+def get_data_win_size(koop_modes: np.ndarray, win_size: tuple[int, int], obst_pos: tuple):
+	koop_modes_xy = koop_modes.shape[:2]
+	window_coords = gen_window_coord(koop_modes_xy, win_size, obst_pos)
 
 	data_window = get_data_window(koop_modes, window_coords)
