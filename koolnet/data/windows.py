@@ -32,3 +32,5 @@ def get_data_win_size(koop_modes: np.ndarray, win_size: tuple[int, int], obst_po
 	window_coords = gen_window_coord(koop_modes_xy, win_size, obst_pos)
 
 	data_window = get_data_window(koop_modes, window_coords)
+	return data_window
+
