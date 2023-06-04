@@ -15,12 +15,21 @@ def gen_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], 
 	win_size_x, win_size_y = win_size
 
 	# TODO: check if win_size > size and size - obst, otherwise goes to default values
+	# if win_size_x >= x or win_size_y >= y:
+	# 	raise ValueError("win_size is bigger than the available size")
 
-	wx0 = np.random.randint(obst_x + (2 * obst_r), x - win_size_x)
-	wy0 = np.random.randint(obst_y + (2 * obst_r), y - win_size_y)
+	wx0 = np.random.randint(0, x - win_size_x)
+	wy0 = np.random.randint(0, y - win_size_y)
 
 	wx1 = wx0 + win_size_x
 	wy1 = wy0 + win_size_y
+
+	while (wx0 < obst_x + (2 * obst_r) < wx1) and (wy0 < obst_y + (2 * obst_r) < wy1):
+		wx0 = np.random.randint(0, x - win_size_x)
+		wy0 = np.random.randint(0, y - win_size_y)
+
+		wx1 = wx0 + win_size_x
+		wy1 = wy0 + win_size_y
 
 	return wx0, wy0, wx1, wy1
 
