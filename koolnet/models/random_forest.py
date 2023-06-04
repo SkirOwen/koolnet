@@ -51,7 +51,7 @@ def cal_iou(pred, obst_pos) -> float:
 def bar(avg, win_per_mode):
 	from tqdm import tqdm
 	rmse_lst, r2_lst = [], []
-	for i in tqdm(range(avg)):
+	for i in tqdm(range(avg), leave=False):
 		rmse, r2 = foo(win_per_mode)
 		rmse_lst.append(rmse)
 		r2_lst.append(r2)
@@ -59,14 +59,17 @@ def bar(avg, win_per_mode):
 	r2_m = np.mean(r2_lst)
 	print(f"{rmse_m = }\n{r2_m = }")
 
+# TODO: add an IoU metric
+
 
 def foo(win_per_mode):
 	global random_seed
+	win_per_mode = 1000
 	random_seed = 17
 	test_size = 0.2
 
-	X, y = get_allmode_data(for_rf=True, win_per_mode=win_per_mode)
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_seed)
+	X, y, w = get_allmode_data(for_rf=True, win_per_mode=win_per_mode, win_size=(10, 10))
+	X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(X, y, w, test_size=test_size, random_state=random_seed)
 	rf_model = train_rf(X_train, y_train, n_esti=100)
 	rmse, r2 = test_rf(rf_model, X_test, y_test)
 
@@ -75,7 +78,7 @@ def foo(win_per_mode):
 
 
 def main():
-	bar(50, 1000)
+	bar(10, 8000)
 
 
 if __name__ == "__main__":
