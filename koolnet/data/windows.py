@@ -22,11 +22,11 @@ def gen_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], 
 	wx1 = wx0 + win_size_x
 	wy1 = wy0 + win_size_y
 
-	return wx0, wx1, wy0, wy1
+	return wx0, wy0, wx1, wy1
 
 
 def get_data_window(koop_modes: np.ndarray, window_coords: tuple[int, int, int, int]) -> np.ndarray:
-	wx0, wx1, wy0, wy1 = window_coords
+	wx0, wy0, wx1, wy1 = window_coords
 	# TODO: check the off by one for the slicing
 	# np.random.randint is [a, b) is semi-open
 	# TODO: change the slicing as array are y, x

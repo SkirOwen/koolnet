@@ -36,8 +36,12 @@ def get_allmode_data(for_rf: bool, win_per_mode: int):
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 	obst_xy = obst_pos[:2]
 
-	x = []
-	y = []
+	for w in tqdm(range(win_per_mode), leave=False, desc="Wind #"):
+		koopmodes_xy = xi.shape[1::-1]
+		# TODO: data is not the correct shape
+		window_coords = gen_window_coord(koopmodes_xy, win_size=win_size,  obst_pos=obst_pos)
+		win_data.append(window_coords)
+		wx0, wy0, _, _ = window_coords
 
 	for mode in tqdm(allmodes):
 		for w in range(win_per_mode):
