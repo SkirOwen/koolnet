@@ -24,7 +24,9 @@ def gen_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], 
 	wx1 = wx0 + win_size_x
 	wy1 = wy0 + win_size_y
 
-	while (wx0 < obst_x + (2 * obst_r) < wx1) and (wy0 < obst_y + (2 * obst_r) < wy1):
+	while (wx0 <= obst_x + (2 * obst_r) < wx1) and (wy0 <= obst_y + (2 * obst_r) < wy1):
+		# TODO: need to check the other corner
+		# TODO: there must be a better way
 		wx0 = np.random.randint(0, x - win_size_x)
 		wy0 = np.random.randint(0, y - win_size_y)
 
