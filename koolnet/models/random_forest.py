@@ -59,8 +59,6 @@ def bar(avg, win_per_mode):
 	r2_m = np.mean(r2_lst)
 	print(f"{rmse_m = }\n{r2_m = }")
 
-# TODO: add an IoU metric
-
 
 def foo(win_per_mode):
 	global random_seed
