@@ -22,10 +22,10 @@ def get_koop_mode(data, mode: int = 1):
 	return xi_
 
 
-def get_mode_data(mode: int):
+def get_mode_data(filepath: str, mode: int) -> tuple:
 	# TODO: this is currently broken, as I need to save the Idd or the xi_
 	# TODO: and not only xi
-	data, metadata = load_h5("xi_v2.h5")
+	data, metadata = load_h5(filepath)
 	# koopmode = get_koop_mode(data, mode)
 	mode_idx = list(metadata["powers"]).index(mode)
 	koopmode = data[mode_idx]
@@ -37,10 +37,10 @@ def get_mode_data(mode: int):
 	return data_window, obst_xy
 
 
-def get_allmode_data(for_rf: bool, win_per_mode: int, win_size: tuple):
+def get_allmode_data(filepath: str, for_rf: bool, win_per_mode: int, win_size: tuple):
 	# TODO: Careful this is for one file, of one simulation
 	# TODO: having a way to see the sampled windows
-	data, metadata = load_h5("xi_v2.h5")
+	data, metadata = load_h5(filepath)
 	allmodes = metadata["powers"]
 
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
