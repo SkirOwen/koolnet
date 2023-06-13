@@ -1,11 +1,15 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
 from sklearn.metrics import mean_squared_error, r2_score
 
+from koolnet import logger
 from koolnet.data.preprocessing import get_allmode_data
+from koolnet.utils.file_ops import load_h5
+from koolnet.utils.plotting import plot_multiple
 
 
 def train_rf(X_train, y_train, n_esti: int = 100):
@@ -43,7 +47,7 @@ def bar(avg, win_per_mode):
 	from tqdm import tqdm
 	rmse_lst, r2_lst = [], []
 	for i in tqdm(range(avg), leave=False):
-		rmse, r2 = foo(win_per_mode)
+		rmse, r2 = run_rf_plot_pred(win_per_mode)
 		rmse_lst.append(rmse)
 		r2_lst.append(r2)
 	rmse_m = np.mean(rmse_lst)
@@ -51,23 +55,42 @@ def bar(avg, win_per_mode):
 	print(f"{rmse_m = }\n{r2_m = }")
 
 
-def foo(win_per_mode):
+def run_rf_plot_pred(win_per_mode):
 	global random_seed
 	win_per_mode = 1000
 	random_seed = 17
 	test_size = 0.2
 
-	X, y, w = get_allmode_data(for_rf=True, win_per_mode=win_per_mode, win_size=(10, 10))
+	X, y, w = get_allmode_data(
+		filepath="xi_v3.h5",
+		for_rf=True,
+		win_per_mode=win_per_mode,
+		win_size=(10, 10),
+		window_downstream=True,
+	)
 	X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(X, y, w, test_size=test_size, random_state=random_seed)
 	rf_model = train_rf(X_train, y_train, n_esti=100)
 	rmse, r2 = test_rf(rf_model, X_test, y_test)
+
+	print(f"{rmse = }, {r2 = }")
+	y_pred = rf_model.predict(X_test)
+
+	data, metadata = load_h5("xi_v3.h5")
+	mode = 20
+	mode_idx = list(metadata["powers"]).index(mode)
+	xi = data[mode_idx]
+	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
+
+	logger.info("Plotting")
+	plot_multiple(xi, w_test, obst_pos, y_pred)
+	plot_pred_obs_dist(obst_pos, w_test, y_pred)
 
 	return rmse, r2
 	# print(f"{rmse = }\n{r2 = }")
 
 
 def main():
-	bar(10, 8000)
+	run_rf_plot_pred(5000)
 
 
 if __name__ == "__main__":
