@@ -22,30 +22,21 @@ def test_rf(rf_model, X_test, y_test):
 	return rmse, r2
 
 
-def cal_iou(pred, obst_pos) -> float:
-	# assuming same radius
-	xp, yp, rp = pred
-	xo, yo, ro = obst_pos
-	area_p = np.pi * rp ** 2
-	area_o = np.pi * ro ** 2
+def plot_pred_obs_dist(obs, win_coors, pred):
+	xp, yp, rp = obs
+	distances = []
+	x, y = [], []
+	for w, obst_pos in zip(win_coors, pred):
+		wx0, wy0, _, _ = w
+		obs_x, obs_y = obst_pos
+		xo = wx0 + obs_x
+		yo = wy0 + obs_y
+		x.append(xo)
+		y.append(yo)
+		distances.append(np.sqrt((xp - xo)**2 + (yp - yo)**2) / rp)
 
-	d = np.sqrt((xp - xo)**2 + (yp - yo)**2)
-
-	if d >= rp + ro:
-		iou = 0
-	elif d <= np.abs(rp - ro):
-		iou = 1
-	else:
-		ai = (
-			rp**2 * np.arccos((d**2 + rp**2 - ro**2) / (2 * d * rp)) +
-			ro**2 * np.arccos((d**2 + ro**2 - rp**2) / (2 * d * ro)) -
-			0.5 * np.sqrt((-d + rp + ro) * (d + rp - ro) * (d - rp + ro) * (d + rp + ro))
-		)
-		au = area_p + area_o - ai
-
-		iou = ai / au
-
-	return iou
+	plt.hist(distances)
+	plt.show()
 
 
 def bar(avg, win_per_mode):
