@@ -37,7 +37,13 @@ def get_mode_data(filepath: str, mode: int) -> tuple:
 	return data_window, obst_xy
 
 
-def get_allmode_data(filepath: str, for_rf: bool, win_per_mode: int, win_size: tuple):
+def get_allmode_data(
+		filepath: str,
+		for_rf: bool,
+		win_per_mode: int,
+		win_size: tuple,
+		window_downstream: bool
+):
 	# TODO: Careful this is for one file, of one simulation
 	# TODO: having a way to see the sampled windows
 	data, metadata = load_h5(filepath)
@@ -54,7 +60,12 @@ def get_allmode_data(filepath: str, for_rf: bool, win_per_mode: int, win_size: t
 	for w in tqdm(range(win_per_mode), leave=False, desc="Wind #"):
 		koopmodes_xy = data.shape[1::]
 		# TODO: data is not the correct shape
-		window_coords = gen_window_coord(koopmodes_xy, win_size=win_size,  obst_pos=obst_pos)
+		window_coords = gen_window_coord(
+			koopmodes_xy,
+			win_size=win_size,
+			obst_pos=obst_pos,
+			downstream=window_downstream,
+		)
 		win_data.append(window_coords)
 		wx0, wy0, _, _ = window_coords
 
