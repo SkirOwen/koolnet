@@ -90,4 +90,3 @@ def get_allmode_data(
 			x_data.append((np.sum(x_mode_r), np.sum(x_mode_abs)))
 
 	return np.array(x_data), np.array(y_data), np.array(win_data)
-
