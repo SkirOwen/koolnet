@@ -3,7 +3,12 @@ from __future__ import annotations
 import numpy as np
 
 
-def gen_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], obst_pos: tuple) -> tuple:
+def gen_window_coord(
+		koop_modes_xy: tuple[int, int],
+		win_size: tuple[int, int],
+		obst_pos: tuple,
+		downstream: bool = False,
+) -> tuple:
 	# pick a random points
 	# check if in bounds and the cylinder is not in
 	# create a padded area of padding == win_size, so guarantee to be in bounds.
@@ -18,8 +23,16 @@ def gen_window_coord(koop_modes_xy: tuple[int, int], win_size: tuple[int, int], 
 	# if win_size_x >= x or win_size_y >= y:
 	# 	raise ValueError("win_size is bigger than the available size")
 
-	wx0 = np.random.randint(0, x - win_size_x)
-	wy0 = np.random.randint(0, y - win_size_y)
+	# TODO: only sample downstream, though I would need to assume max(x, y) is the downstream.
+	min_x = 0
+	min_y = 0
+	if downstream:
+		# Assuming downstream is x increasing.
+		# padding the obstacle with an obst_r
+		min_x = obst_x + 2 * obst_r
+
+	wx0 = np.random.randint(min_x, x - win_size_x)
+	wy0 = np.random.randint(min_y, y - win_size_y)
 
 	wx1 = wx0 + win_size_x
 	wy1 = wy0 + win_size_y
