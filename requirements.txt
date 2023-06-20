@@ -2,6 +2,7 @@ ipython
 h5py
 matplotlib
 numpy
+pandas
 pytorch
 rich
 scikit-learn
