@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -5,7 +7,13 @@ from koolnet.utils.file_ops import load_h5
 from koolnet.data.windows import gen_window_coord
 
 
-def plot_multiple(xi: np.ndarray, w_coor: list, obst_pos: tuple, ys: list):
+def plot_multiple(
+		xi: np.ndarray,
+		w_coor: list,
+		obst_pos: tuple,
+		ys: list,
+		title: None | str = None,
+):
 	plot_x, plot_y = xi.shape[:2]
 
 	# Need to flip axes as Xs are rows and Ys are cols
@@ -60,6 +68,7 @@ def plot_multiple(xi: np.ndarray, w_coor: list, obst_pos: tuple, ys: list):
 
 	axs.set_aspect('equal')
 	plt.tight_layout()
+	plt.title(title)
 	plt.show()
 
 
