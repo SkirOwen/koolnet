@@ -7,7 +7,6 @@ from koolnet.data.windows import get_data_win_size, get_data_window, gen_window_
 
 
 def dist_win_obst(obst_xy: tuple[int, int], win_coords: tuple[int, int, int, int]) -> tuple[int, int]:
-	# TODO: Check this
 	x0, y0, _, _ = win_coords
 	dx = obst_xy[0] - x0
 	dy = obst_xy[1] - y0
