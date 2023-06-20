@@ -1,7 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas
+import pandas as pd
 
+from tqdm import tqdm
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
 
 from sklearn.metrics import mean_squared_error, r2_score
@@ -14,7 +18,8 @@ from koolnet.utils.plotting import plot_multiple
 
 
 def train_rf(X_train, y_train, n_esti: int = 100):
-	rf_model = RandomForestRegressor(n_estimators=n_esti, random_state=RANDOM_SEED)
+	# RandomForestRegressor(max_depth=10, max_features='log2', n_estimators=200)
+	rf_model = RandomForestRegressor(n_estimators=n_esti, random_state=RANDOM_SEED, max_features="log2", max_depth=10)
 	rf_model.fit(X_train, y_train)
 	return rf_model
 
@@ -56,35 +61,82 @@ def bar(avg, win_per_mode):
 	print(f"{rmse_m = }\n{r2_m = }")
 
 
-def run_rf_plot_pred(win_per_mode):
+def hyper_param(X_train, y_train):
+	from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
-	win_per_mode = 1000
+	max_depth = [int(x) for x in np.linspace(10, 110, num=11)]
+	max_depth.append(None)
+
+	param_grid = {
+		'n_estimators': [x for x in range(10, 500, 10)],
+		'max_features': ['sqrt', 'log2', None],
+		'max_depth': max_depth,
+		'min_samples_split': [2, 5, 10],
+		'min_samples_leaf': [1, 2, 4],
+		'bootstrap': [True, False]
+	}
+
+	grid_search = GridSearchCV(RandomForestRegressor(), param_grid=param_grid)
+	grid_search.fit(X_train, y_train)
+	# RandomForestRegressor(max_depth=10, max_features='log2', n_estimators=200)
+	print(grid_search.best_estimator_)
+
+
+def run_rf_plot_pred(win_per_mode):
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
+	filepath = "cylinder_xi_1_50.h5"
 
-	X, y, w = get_allmode_data(
-		filepath="xi_v3.h5",
+	X, y, w, allmode = get_allmode_data(
+		filepath=filepath,
 		for_rf=True,
 		win_per_mode=win_per_mode,
-		win_size=(15, 15),
+		win_size=(10, 10),
 		window_downstream=True,
+		mode_collapse=True,
 	)
+	print(X.shape)
 	X_train, X_test, y_train, y_test, w_train, w_test = train_test_split(X, y, w, test_size=test_size, random_state=RANDOM_SEED)
-	rf_model = train_rf(X_train, y_train, n_esti=100)
+	rf_model = train_rf(X_train, y_train, n_esti=200)
 	rmse, r2 = test_rf(rf_model, X_test, y_test)
 
 	print(f"{rmse = }, {r2 = }")
 	y_pred = rf_model.predict(X_test)
 
-	data, metadata = load_h5("xi_v3.h5")
+	data, metadata = load_h5(filepath)
 	mode = 20
 	mode_idx = list(metadata["powers"]).index(mode)
 	xi = data[mode_idx]
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 
 	logger.info("Plotting")
-	plot_multiple(xi, w_test, obst_pos, y_pred)
+	plot_multiple(xi, w_train, obst_pos, y_pred, title="Testing")
+	y_train_pred = rf_model.predict(X_train)
+	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
+
+	feature_name = [f"{t}_{m}" for m in allmode for t in ["real", "abs"]]
+	importance = rf_model.feature_importances_
+	std = np.std([tree.feature_importances_ for tree in rf_model.estimators_], axis=0)
+	forest_importances = pd.Series(importance, index=feature_name)
+	fig, ax = plt.subplots()
+	forest_importances.plot.bar(yerr=std, ax=ax)
+	ax.set_title("Feature importances using MDI")
+	ax.set_ylabel("Mean decrease in impurity")
+	fig.tight_layout()
+	plt.show()
+
+	from sklearn.inspection import permutation_importance
+	result = permutation_importance(
+		rf_model, X_test, y_test, n_repeats=10, random_state=42, n_jobs=2
+	)
+	forest_importances = pd.Series(result.importances_mean, index=feature_name)
+	fig, ax = plt.subplots()
+	forest_importances.plot.bar(yerr=result.importances_std, ax=ax)
+	ax.set_title("Feature importances using permutation on full model")
+	ax.set_ylabel("Mean accuracy decrease")
+	fig.tight_layout()
+	plt.show()
 
 	return rmse, r2
 	# print(f"{rmse = }\n{r2 = }")
