@@ -15,11 +15,11 @@ def plot_multiple(xi: np.ndarray, w_coor: list, obst_pos: tuple, ys: list):
 	d = 2 * obst_r
 	d = 1
 
-	fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+	fig, axs = plt.subplots(figsize=(10, 6))
 
 	contour_1 = np.linspace(np.min(np.real(xi)), np.max(np.real(xi)), 21)
 
-	c1 = axs[0].contourf(
+	c1 = axs.contourf(
 		# (x - obst_x) / d,
 		# (y - obst_y) / d,
 		x,
@@ -30,12 +30,12 @@ def plot_multiple(xi: np.ndarray, w_coor: list, obst_pos: tuple, ys: list):
 		# vmin=np.min(contourp_1),
 		# vmax=np.max(contourp_1)
 	)
-	# cbar1 = fig.colorbar(c1, ax=axs[0])
+	# cbar1 = fig.colorbar(c1, ax=axs)
 	# cbar1.formatter.set_powerlimits((-2, 2))  # Display colorbar tick labels in scientific notation
 	# cbar1.update_ticks()
 
 	# Obstacle
-	axs[0].fill(
+	axs.fill(
 		obst_r * np.cos(np.arange(0, 2 * np.pi, 0.01)) + obst_x,
 		obst_r * np.sin(np.arange(0, 2 * np.pi, 0.01)) + obst_y,
 		"r"
@@ -43,7 +43,7 @@ def plot_multiple(xi: np.ndarray, w_coor: list, obst_pos: tuple, ys: list):
 	for w, pred in zip(w_coor, ys):
 		wx0, wy0, wx1, wy1 = w
 		# Window
-		axs[0].fill(
+		axs.fill(
 			(np.array([wx0, wx1, wx1, wx0])),
 			(np.array([wy0, wy0, wy1, wy1])),
 			color=(0.7, 0.2, 0.3, 0.15)
@@ -52,13 +52,13 @@ def plot_multiple(xi: np.ndarray, w_coor: list, obst_pos: tuple, ys: list):
 		scale_pred_y = (wy0 + pred[1])
 
 		# Predicted obstacle
-		axs[0].fill(
+		axs.fill(
 			(obst_r * np.cos(np.arange(0, 2 * np.pi, 0.01))) + scale_pred_x,
 			(obst_r * np.sin(np.arange(0, 2 * np.pi, 0.01))) + scale_pred_y,
 			color=(0.45, 0.23, 0.75, 0.2)
 		)
 
-	axs[0].set_aspect('equal')
+	axs.set_aspect('equal')
 	plt.tight_layout()
 	plt.show()
 
@@ -75,11 +75,11 @@ def plot_window(data, win_coords, obst_pos, pred):
 	d = 2 * obst_r
 	d = 1
 
-	fig, axs = plt.subplots(2, 1, figsize=(10, 10))
+	fig, axs = plt.subplots(figsize=(10, 10))
 
 	contour_1 = np.linspace(np.min(np.real(data)), np.max(np.real(data)), 21)
 
-	c1 = axs[0].contourf(
+	c1 = axs.contourf(
 		# (x - obst_x) / d,
 		# (y - obst_y) / d,
 		x,
@@ -90,18 +90,18 @@ def plot_window(data, win_coords, obst_pos, pred):
 		# vmin=np.min(contourp_1),
 		# vmax=np.max(contourp_1)
 	)
-	# cbar1 = fig.colorbar(c1, ax=axs[0])
+	# cbar1 = fig.colorbar(c1, ax=axs)
 	# cbar1.formatter.set_powerlimits((-2, 2))  # Display colorbar tick labels in scientific notation
 	# cbar1.update_ticks()
 
 	# Obstacle
-	axs[0].fill(
+	axs.fill(
 		obst_r * np.cos(np.arange(0, 2 * np.pi, 0.01)) + obst_x,
 		obst_r * np.sin(np.arange(0, 2 * np.pi, 0.01)) + obst_y,
 		"r"
 	)
 	# Window
-	axs[0].fill(
+	axs.fill(
 		(np.array([wx0, wx1, wx1, wx0])),
 		(np.array([wy0, wy0, wy1, wy1])),
 		color=(0.7, 0.2, 0.3, 0.65)
@@ -111,14 +111,14 @@ def plot_window(data, win_coords, obst_pos, pred):
 	scale_pred_y = (wy0 + pred[1])
 
 	# Predicted obstacle
-	axs[0].fill(
+	axs.fill(
 		(obst_r * np.cos(np.arange(0, 2 * np.pi, 0.01))) + scale_pred_x,
 		(obst_r * np.sin(np.arange(0, 2 * np.pi, 0.01))) + scale_pred_y,
 		color=(0.45, 0.23, 0.75, 0.8)
 	)
 
 	# Line
-	axs[0].fill(
+	axs.fill(
 		(np.array([wx0, wx0 + pred[0]])),
 		(np.array([wy0, wy0 + pred[1]])),
 		color=(0.37, 0.23, 0.17, 0.75)
@@ -128,10 +128,10 @@ def plot_window(data, win_coords, obst_pos, pred):
 	print(f"Absolute pos: {scale_pred_x}, {scale_pred_y}")
 	print(f"Relative pos: {pred[0]}, {pred[1]}")
 
-	# axs[0].set_ylim(axs[0].get_ylim()[::-1])
-	axs[0].set_xticks(np.arange(0, 400, 25))
-	axs[0].set_yticks(np.arange(0, 100, 10))
-	axs[0].set_aspect('equal')
+	# axs.set_ylim(axs.get_ylim()[::-1])
+	axs.set_xticks(np.arange(0, 400, 25))
+	axs.set_yticks(np.arange(0, 100, 10))
+	axs.set_aspect('equal')
 	plt.tight_layout()
 	# plt.savefig("./output/plots/fig.svg")
 	plt.show()
