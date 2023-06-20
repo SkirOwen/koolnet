@@ -42,8 +42,9 @@ def get_allmode_data(
 		for_rf: bool,
 		win_per_mode: int,
 		win_size: tuple,
-		window_downstream: bool
-):
+		window_downstream: bool,
+		mode_collapse: bool = True,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 	# TODO: Careful this is for one file, of one simulation
 	# TODO: having a way to see the sampled windows
 	data, metadata = load_h5(filepath)
@@ -59,7 +60,7 @@ def get_allmode_data(
 
 	for w in tqdm(range(win_per_mode), leave=False, desc="Wind #"):
 		koopmodes_xy = data.shape[1::]
-		# TODO: data is not the correct shape
+
 		window_coords = gen_window_coord(
 			koopmodes_xy,
 			win_size=win_size,
@@ -69,7 +70,6 @@ def get_allmode_data(
 		win_data.append(window_coords)
 		wx0, wy0, _, _ = window_coords
 
-		# TODO: check this
 		dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
 
 		y_data.append((dist_x, dist_y))
@@ -86,7 +86,10 @@ def get_allmode_data(
 				wind_r, wind_abs = np.real(data_window), np.abs(data_window)
 				x_mode_r.append(wind_r.flatten().sum())
 				x_mode_abs.append(wind_abs.flatten().sum())
-		if for_rf:
+
+		if mode_collapse:
+			x_data.append((*x_mode_r, *x_mode_abs))
+		else:
 			x_data.append((np.sum(x_mode_r), np.sum(x_mode_abs)))
 
-	return np.array(x_data), np.array(y_data), np.array(win_data)
+	return np.array(x_data), np.array(y_data), np.array(win_data), allmodes
