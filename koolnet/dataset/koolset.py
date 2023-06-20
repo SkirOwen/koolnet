@@ -1,7 +1,8 @@
-import pytorch_lightning as pl
+import torch
+from torch.utils.data import Dataset
 
 
-class Koolset:
+class Koolset(Dataset):
 	def __init__(self):
 		pass
 
