@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import xgboost
 
 import xgboost as xgb
 
@@ -12,6 +13,7 @@ from koolnet import RANDOM_SEED
 from koolnet.data.preprocessing import get_allmode_data
 from koolnet.utils.file_ops import load_h5
 from koolnet.utils.plotting import plot_multiple
+from koolnet.utils.metrics import avg_rel_iou
 
 
 def train_rf(X_train, y_train, n_esti: int = 100):
@@ -48,9 +50,9 @@ def plot_pred_obs_dist(obs, win_coors, pred):
 def run_rf_plot_pred(win_per_mode):
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
-	filepath = "cylinder_xi_1_50.h5"
+	filepath = "xi_v3.h5"
 
-	X, y, w, _ = get_allmode_data(
+	X, y, w, allmode = get_allmode_data(
 		filepath=filepath,
 		for_rf=True,
 		win_per_mode=win_per_mode,
@@ -74,10 +76,21 @@ def run_rf_plot_pred(win_per_mode):
 
 	logger.info("Plotting")
 	plot_multiple(xi, w_train, obst_pos, y_pred, title="Testing")
+	avg_test_iou = avg_rel_iou(y_pred, obst_pos, w_test)
+	print(f"{avg_test_iou = }")
+
 	y_train_pred = rf_model.predict(X_train)
+	avg_train_iou = avg_rel_iou(y_train_pred, obst_pos, w_test)
+	print(f"{avg_train_iou = }")
 	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
 
+	rf_model.get_booster().feature_names = [f"{t}_{m}" for m in allmode for t in ["real", "abs"]]
+
+	print("figure importance")
+	plt.figure(figsize=(20, 20))
+	xgboost.plot_importance(rf_model, ax=plt.gca())
+	plt.show()
 	return rmse, r2
 	# print(f"{rmse = }\n{r2 = }")
 
