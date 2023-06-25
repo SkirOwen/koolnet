@@ -8,6 +8,7 @@ def gen_window_coord(
 		win_size: tuple[int, int],
 		obst_pos: tuple,
 		downstream: bool = False,
+		padding: int = 10,
 ) -> tuple:
 	# pick a random points
 	# check if in bounds and the cylinder is not in
@@ -24,27 +25,28 @@ def gen_window_coord(
 	# 	raise ValueError("win_size is bigger than the available size")
 
 	# TODO: only sample downstream, though I would need to assume max(x, y) is the downstream.
-	min_x = 0
-	min_y = 0
+	min_x = padding
+	min_y = padding
 	if downstream:
 		# Assuming downstream is x increasing.
 		# padding the obstacle with an obst_r
 		min_x = obst_x + 2 * obst_r
 
-	wx0 = np.random.randint(min_x, x - win_size_x)
-	wy0 = np.random.randint(min_y, y - win_size_y)
+	wx0 = np.random.randint(min_x, x - win_size_x - padding)
+	wy0 = np.random.randint(min_y, y - win_size_y - padding)
 
 	wx1 = wx0 + win_size_x
 	wy1 = wy0 + win_size_y
 
-	while (wx0 <= obst_x + (2 * obst_r) < wx1) and (wy0 <= obst_y + (2 * obst_r) < wy1):
-		# TODO: need to check the other corner
-		# TODO: there must be a better way
-		wx0 = np.random.randint(0, x - win_size_x)
-		wy0 = np.random.randint(0, y - win_size_y)
+	if not downstream:
+		while (wx0 <= obst_x + (2 * obst_r) < wx1) and (wy0 <= obst_y + (2 * obst_r) < wy1):
+			# TODO: need to check the other corner
+			# TODO: there must be a better way
+			wx0 = np.random.randint(0, x - win_size_x - padding)
+			wy0 = np.random.randint(0, y - win_size_y - padding)
 
-		wx1 = wx0 + win_size_x
-		wy1 = wy0 + win_size_y
+			wx1 = wx0 + win_size_x
+			wy1 = wy0 + win_size_y
 
 	return wx0, wy0, wx1, wy1
 
