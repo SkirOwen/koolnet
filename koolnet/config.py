@@ -6,7 +6,7 @@ import os
 from argparse import Namespace
 
 
-def get_rdp_parent() -> str:
+def get_kool_parent() -> str:
 	koolnet_module = importlib.import_module("koolnet")
 	koolnet_dir = os.path.dirname(inspect.getabsfile(koolnet_module))
 	return os.path.abspath(os.path.join(koolnet_dir, ".."))
