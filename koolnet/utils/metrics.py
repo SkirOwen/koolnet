@@ -38,5 +38,25 @@ def avg_rel_iou(rel_preds, obst_pos, win_poss) -> float:
 	lst = []
 	for pred, w in zip(rel_preds, win_poss):
 		lst.append(rel_iou(pred, obst_pos, w))
+	print(f"Number of non-zero IoU: {sum([i for i in lst if i != 0])}")
+	print(f"Number of zero IoU: {sum([i for i in lst if i == 0])}")
 	return sum(lst) / len(lst)
+
+
+def shap_expl(model, X_train):
+	import shap
+	explainer = shap.Explainer(model)
+	shap_values = explainer(X_train)
+
+	# visualize the first prediction's explanation
+	shap.plots.waterfall(shap_values[0])
+	# visualize the first prediction's explanation with a force plot
+	shap.plots.force(shap_values[0])
+	# visualize all the training set predictions
+	shap.plots.force(shap_values)
+	# visualize all the training set predictions
+	shap.plots.force(shap_values)
+	# summarize the effects of all the features
+	shap.plots.beeswarm(shap_values)
+	shap.plots.bar(shap_values)
 
