@@ -61,14 +61,14 @@ def bar(avg, win_per_mode):
 	print(f"{rmse_m = }\n{r2_m = }")
 
 
-def hyper_param(X_train, y_train):
+def hyper_param(X_train, y_train, jobs: int = -1):
 	from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
-	max_depth = [int(x) for x in np.linspace(10, 110, num=11)]
+	max_depth = [x for x in range(10, 120, 10)]
 	max_depth.append(None)
 
 	param_grid = {
-		'n_estimators': [x for x in range(10, 500, 10)],
+		'n_estimators': [x for x in range(10, 500, 20)],
 		'max_features': ['sqrt', 'log2', None],
 		'max_depth': max_depth,
 		'min_samples_split': [2, 5, 10],
@@ -76,7 +76,7 @@ def hyper_param(X_train, y_train):
 		'bootstrap': [True, False]
 	}
 
-	grid_search = GridSearchCV(RandomForestRegressor(), param_grid=param_grid)
+	grid_search = GridSearchCV(RandomForestRegressor(), param_grid=param_grid, verbose=10, n_jobs=jobs)
 	grid_search.fit(X_train, y_train)
 	# RandomForestRegressor(max_depth=10, max_features='log2', n_estimators=200)
 	print(grid_search.best_estimator_)
