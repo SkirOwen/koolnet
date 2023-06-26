@@ -53,9 +53,7 @@ def gen_window_coord(
 
 def get_data_window(koop_modes: np.ndarray, window_coords: tuple[int, int, int, int]) -> np.ndarray:
 	wx0, wy0, wx1, wy1 = window_coords
-	# TODO: check the off by one for the slicing
 	# np.random.randint is [a, b) is semi-open
-	# TODO: change the slicing as array are y, x
 	return koop_modes[wx0:wx1, wy0:wy1]
 
 
@@ -65,4 +63,19 @@ def get_data_win_size(koop_modes: np.ndarray, win_size: tuple[int, int], obst_po
 
 	data_window = get_data_window(koop_modes, window_coords)
 	return data_window
+
+
+def window_coord_centre_point(center: tuple, win_size: tuple[int, int]) -> tuple[int, int, int, int]:
+	xc, yc = center
+	win_size_x, win_size_y = win_size
+
+	# assuming never can be on top of the obstacle
+	# assuming no padding
+	wx0 = xc - win_size_x // 2
+	wy0 = yc - win_size_y // 2
+
+	wx1 = xc + win_size_x // 2
+	wy1 = yc + win_size_y // 2
+
+	return wx0, wy0, wx1, wy1
 
