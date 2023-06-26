@@ -81,10 +81,13 @@ def get_allmode_data(
 			koopmode = data[mode_idx]
 
 			data_window = get_data_window(koopmode, window_coords)
+			wind_r, wind_abs = np.real(data_window), np.abs(data_window)
 			if for_rf:
-				wind_r, wind_abs = np.real(data_window), np.abs(data_window)
 				x_mode_r.append(wind_r.flatten().sum())
 				x_mode_abs.append(wind_abs.flatten().sum())
+			else:
+				x_mode_r.append(wind_r)
+				x_mode_abs.append(wind_abs)
 
 		if mode_collapse:
 			x_data.append((*x_mode_r, *x_mode_abs))
