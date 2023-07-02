@@ -5,6 +5,8 @@ import os.path
 import matplotlib.pyplot as plt
 import numpy as np
 import cmocean as cm
+import seaborn as sns
+from matplotlib import pyplot as plt
 
 from koolnet.utils.file_ops import load_h5
 from koolnet.data.windows import gen_window_coord
@@ -160,6 +162,43 @@ def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
 	axs.set_aspect('equal')
 	plt.tight_layout()
 	# plt.savefig("./output/plots/fig.svg")
+	plt.show()
+
+
+def plot_pred_obs_dist(obs, win_coors, pred) -> None:
+	xp, yp, rp = obs
+	distances = []
+	x, y = [], []
+	for w, obst_pos in zip(win_coors, pred):
+		wx0, wy0, _, _ = w
+		obs_x, obs_y = obst_pos
+		xo = wx0 + obs_x
+		yo = wy0 + obs_y
+		x.append(xo)
+		y.append(yo)
+		distances.append(np.sqrt((xp - xo)**2 + (yp - yo)**2) / rp)
+
+	f, ax = plt.subplots(figsize=(7, 5))
+	sns.despine(f)
+	sns.histplot(
+		distances,
+		edgecolor=".3",
+		linewidth=.5,
+	)
+	plt.xlabel("Distance to the obstacle normalised to the radius")
+	plt.ylabel("Count")
+	plt.savefig("hist_dist_norm_radius.svg", format="svg")
+	plt.show()
+	f, ax = plt.subplots(figsize=(7, 5))
+	sns.despine(f)
+	sns.histplot(
+		x=(xp - np.array(x)) / (2 * rp),
+		y=(yp - np.array(y)) / (2 * rp),
+		cbar=True,
+		cbar_kws=dict(shrink=.75),
+	)
+	plt.title("Heatmap of the distance scaled to the diameter of the obstacle")
+	plt.savefig("heatmap_dist.svg", format="svg")
 	plt.show()
 
 

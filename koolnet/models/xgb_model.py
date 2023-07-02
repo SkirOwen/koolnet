@@ -14,8 +14,7 @@ from koolnet import RANDOM_SEED
 from koolnet.data.preprocessing import get_allmode_data
 from koolnet.utils.file_ops import load_h5
 from koolnet.utils.plotting import plot_multiple
-from koolnet.utils.metrics import avg_rel_iou
-
+from koolnet.utils.plotting import plot_pred_obs_dist
 from koolnet.models.predict import chain_mutliple
 
 
@@ -33,42 +32,7 @@ def test_boost(boost_model, X_test, y_test):
 	return rmse, r2
 
 
-def plot_pred_obs_dist(obs, win_coors, pred) -> None:
-	xp, yp, rp = obs
-	distances = []
-	x, y = [], []
-	for w, obst_pos in zip(win_coors, pred):
-		wx0, wy0, _, _ = w
-		obs_x, obs_y = obst_pos
-		xo = wx0 + obs_x
-		yo = wy0 + obs_y
-		x.append(xo)
-		y.append(yo)
-		distances.append(np.sqrt((xp - xo)**2 + (yp - yo)**2) / rp)
-
-	f, ax = plt.subplots(figsize=(7, 5))
-	sns.despine(f)
-	sns.histplot(
-		distances,
-		edgecolor=".3",
-		linewidth=.5,
-	)
-	plt.savefig("hist_dist_norm_radius.svg", format="svg")
-	plt.show()
-	f, ax = plt.subplots(figsize=(7, 5))
-	sns.despine(f)
-	sns.histplot(
-		x=(xp - np.array(x)) / (2 * rp),
-		y=(yp - np.array(y)) / (2 * rp),
-		cbar=True,
-		cbar_kws=dict(shrink=.75),
-	)
-	plt.title("Heatmap of the distance scaled to the diameter of the obstacle")
-	plt.savefig("heatmap_dist.svg", format="svg")
-	plt.show()
-
-
-def run_boost_plot_pred(win_per_mode):
+def run_boost_plot_pred(win_per_mode: int) -> None:
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "xi_v3.h5"
