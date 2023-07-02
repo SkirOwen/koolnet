@@ -1,9 +1,12 @@
+cmocean
 ipython
 h5py
+hyperopt
 matplotlib
 numpy
 pandas
 pytorch
 rich
 scikit-learn
+seaborn
 tqdm
