@@ -27,8 +27,8 @@ def parse_args() -> Namespace:
 	)
 
 	parser.add_argument(
-		"-e", "--example",
-		help="Example to run. Currently only supports 'cylinder'.",
+		"-m", "-model",
+		help="the type of the model to run, can be `rf` / `xgboost` / `cnn`"
 	)
 
 	parser.add_argument(
