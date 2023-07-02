@@ -71,11 +71,11 @@ def window_coord_centre_point(center: tuple, win_size: tuple[int, int]) -> tuple
 
 	# assuming never can be on top of the obstacle
 	# assuming no padding
-	wx0 = xc - win_size_x // 2
-	wy0 = yc - win_size_y // 2
+	wx0 = int(xc - win_size_x // 2)
+	wy0 = int(yc - win_size_y // 2)
 
-	wx1 = xc + win_size_x // 2
-	wy1 = yc + win_size_y // 2
+	wx1 = int(xc + win_size_x // 2)
+	wy1 = int(yc + win_size_y // 2)
 
 	return wx0, wy0, wx1, wy1
 
