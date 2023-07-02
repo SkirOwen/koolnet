@@ -28,31 +28,32 @@ def chain_predict_one(window_coor, model, obst_pos, data, allmodes, for_rf):
 
 	dist_x, dist_y = dist_win_obst(obst_xy, window_coor)
 	y = [dist_x, dist_y]
-	x_mode_r = []
-	x_mode_abs = []
-	x_data = []
-
-	for mode in allmodes:
-		# koopmode = get_koop_mode(data, mode)
-		# TODO: fix this!
-		mode_idx = list(allmodes).index(mode)
-		koopmode = data[mode_idx]
-
-		data_window = get_data_window(koopmode, window_coor)
-		wind_r, wind_abs = np.real(data_window), np.abs(data_window)
-		if for_rf:
-			x_mode_r.append(wind_r.flatten().sum())
-			x_mode_abs.append(wind_abs.flatten().sum())
-		else:
-			x_mode_r.append(wind_r)
-			x_mode_abs.append(wind_abs)
-	x_data.append((*x_mode_r, *x_mode_abs))
-	x_data = np.array(x_data)
 
 	div_count = 0
 	score = 0
 	k = 0
+
 	while score <= 0:
+		x_mode_r = []
+		x_mode_abs = []
+		x_data = []
+
+		for mode in allmodes:
+			# koopmode = get_koop_mode(data, mode)
+			# TODO: fix this!
+			mode_idx = list(allmodes).index(mode)
+			koopmode = data[mode_idx]
+
+			data_window = get_data_window(koopmode, window_coor)
+			wind_r, wind_abs = np.real(data_window), np.abs(data_window)
+			if for_rf:
+				x_mode_r.append(wind_r.flatten().sum())
+				x_mode_abs.append(wind_abs.flatten().sum())
+			else:
+				x_mode_r.append(wind_r)
+				x_mode_abs.append(wind_abs)
+		x_data.append((*x_mode_r, *x_mode_abs))
+		x_data = np.array(x_data)
 
 		if isinstance(model, pl.LightningModule):
 			logger.debug("Chain predict on KoolNet")
@@ -82,26 +83,6 @@ def chain_predict_one(window_coor, model, obst_pos, data, allmodes, for_rf):
 			true_y,
 			win_size=(10, 10),
 		)
-		x_mode_r = []
-		x_mode_abs = []
-		x_data = []
-
-		for mode in allmodes:
-			# koopmode = get_koop_mode(data, mode)
-			# TODO: fix this!
-			mode_idx = list(allmodes).index(mode)
-			koopmode = data[mode_idx]
-
-			data_window = get_data_window(koopmode, window_coor)
-			wind_r, wind_abs = np.real(data_window), np.abs(data_window)
-			if for_rf:
-				x_mode_r.append(wind_r.flatten().sum())
-				x_mode_abs.append(wind_abs.flatten().sum())
-			else:
-				x_mode_r.append(wind_r)
-				x_mode_abs.append(wind_abs)
-		x_data.append((*x_mode_r, *x_mode_abs))
-		x_data = np.array(x_data)
 
 	return div_count - 1
 
