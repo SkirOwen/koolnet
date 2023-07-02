@@ -42,8 +42,26 @@ def get_allmode_data(
 		win_per_mode: int,
 		win_size: tuple,
 		window_downstream: bool,
-		mode_collapse: bool = True,
+		mode_collapse: bool = False,
+		augment: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+	"""
+
+	Parameters
+	----------
+	filepath
+	for_rf
+	win_per_mode
+	win_size
+	window_downstream
+	mode_collapse : bool,
+		If True collapse sum across all the modes
+	augment
+
+	Returns
+	-------
+
+	"""
 	# TODO: Careful this is for one file, of one simulation
 	# TODO: having a way to see the sampled windows
 	data, metadata = load_h5(filepath)
@@ -69,12 +87,16 @@ def get_allmode_data(
 		win_data.append(window_coords)
 		wx0, wy0, _, _ = window_coords
 
-		dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
+		if augment:
+			# TODO: rotate by 90, 180, -90
+			dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
+		else:
+			dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
 
 		y_data.append((dist_x, dist_y))
 		x_mode_r = []
 		x_mode_abs = []
-		for mode in tqdm(allmodes, leave=False, desc="Mode #"):
+		for mode in allmodes:
 			# koopmode = get_koop_mode(data, mode)
 			# TODO: fix this!
 			mode_idx = list(metadata["powers"]).index(mode)
@@ -90,8 +112,8 @@ def get_allmode_data(
 				x_mode_abs.append(wind_abs)
 
 		if mode_collapse:
-			x_data.append((*x_mode_r, *x_mode_abs))
-		else:
 			x_data.append((np.sum(x_mode_r), np.sum(x_mode_abs)))
+		else:
+			x_data.append((*x_mode_r, *x_mode_abs))
 
 	return np.array(x_data), np.array(y_data), np.array(win_data), allmodes
