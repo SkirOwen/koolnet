@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+import torch
+import lightning as pl
 
+from koolnet import logger
 from koolnet.utils.metrics import rel_iou
-from koolnet.data.windows import get_data_window,window_coord_centre_point
+from koolnet.data.windows import get_data_window, window_coord_centre_point
 
 
 def dist_win_obst(obst_xy: tuple[int, int], win_coords: tuple[int, int, int, int]) -> tuple[int, int]:
@@ -50,17 +53,31 @@ def chain_predict_one(window_coor, model, obst_pos, data, allmodes, for_rf):
 	score = 0
 	k = 0
 	while score <= 0:
-		y = model.predict(x_data)[0]
+
+		if isinstance(model, pl.LightningModule):
+			logger.debug("Chain predict on KoolNet")
+			x = torch.Tensor(x_data)
+			y = model(x).detach()[0].tolist()
+		else:
+			y = model.predict(x_data)[0]
+
 		score = rel_iou(y, obst_pos, window_coor)
+
 		if score > 0:
 			div_count += 1
 			break
+
 		true_y = (window_coor[0] + y[0]), (window_coor[1] + y[1])
-		if not (0 <= true_y[0] <= koopmodes_xy[0]) or not (0 <= true_y[1] <= koopmodes_xy[1]):
+		if not (5 <= true_y[0] <= koopmodes_xy[0] - 5) or not (5 <= true_y[1] <= koopmodes_xy[1] - 5):
 			# print("Ha")
 			div_count = -div_count
 			break
+		k += 1
+		if k > 100:
+			logger.debug(f"Chain predict did not converge nor diverged in {k} iterations, stopping the chain")
+			break
 
+		div_count += 1
 		window_coor = window_coord_centre_point(
 			true_y,
 			win_size=(10, 10),
