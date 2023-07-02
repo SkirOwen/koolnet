@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+import cmocean as cm
 
 from koolnet.utils.file_ops import load_h5
 from koolnet.data.windows import gen_window_coord
@@ -13,6 +14,8 @@ def plot_multiple(
 		obst_pos: tuple,
 		ys: list,
 		title: None | str = None,
+		cmap=cm.cm.gray,
+		draw_line: bool = False,
 ):
 	plot_x, plot_y = xi.shape[:2]
 
@@ -34,7 +37,7 @@ def plot_multiple(
 		y,
 		np.real(xi.T),
 		contour_1,
-		# cmap=cm.cm.curl,
+		cmap=cmap,
 		# vmin=np.min(contourp_1),
 		# vmax=np.max(contourp_1)
 	)
@@ -65,14 +68,21 @@ def plot_multiple(
 			(obst_r * np.sin(np.arange(0, 2 * np.pi, 0.01))) + scale_pred_y,
 			color=(0.45, 0.23, 0.75, 0.2)
 		)
+		if draw_line:
+			axs.fill(
+				(np.array([wx0, scale_pred_x])),
+				(np.array([wy0, scale_pred_y])),
+				color=(0.37, 0.23, 0.17, 0.75)
+			)
 
 	axs.set_aspect('equal')
 	plt.tight_layout()
 	plt.title(title)
+	plt.savefig(f"{title}_multiplot.png", dpi=400)
 	plt.show()
 
 
-def plot_window(data, win_coords, obst_pos, pred):
+def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
 	wx0, wy0, wx1, wy1 = win_coords
 
 	plot_x, plot_y = data.shape[:2]
@@ -95,7 +105,7 @@ def plot_window(data, win_coords, obst_pos, pred):
 		y,
 		np.real(data.T),
 		contour_1,
-		# cmap=cm.cm.curl,
+		cmap=cmap,
 		# vmin=np.min(contourp_1),
 		# vmax=np.max(contourp_1)
 	)
