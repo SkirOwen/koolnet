@@ -29,8 +29,8 @@ def cal_iou(pred, obst_pos) -> float:
 
 def rel_iou(rel_pred, obst_pos, win_pos) -> float:
 	# TODO: assuming same size for pred as obst
-	wx0, wy0, wx1, wy1 = win_pos
-	pred = (wx0 + rel_pred[0]), (wx1 + rel_pred[1]), obst_pos[2]
+	wx0, wy0, _, _ = win_pos
+	pred = (wx0 + rel_pred[0]), (wy0 + rel_pred[1]), obst_pos[2]
 	return cal_iou(pred, obst_pos)
 
 
