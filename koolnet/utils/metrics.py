@@ -1,4 +1,8 @@
+from __future__ import annotations
+
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 
 def cal_iou(pred, obst_pos) -> float:
@@ -34,12 +38,27 @@ def rel_iou(rel_pred, obst_pos, win_pos) -> float:
 	return cal_iou(pred, obst_pos)
 
 
-def avg_rel_iou(rel_preds, obst_pos, win_poss) -> float:
+def avg_rel_iou(rel_preds, obst_pos, win_poss, filename: None | str = None) -> float:
 	lst = []
 	for pred, w in zip(rel_preds, win_poss):
 		lst.append(rel_iou(pred, obst_pos, w))
-	print(f"Number of non-zero IoU: {sum([i for i in lst if i != 0])}")
-	print(f"Number of zero IoU: {sum([i for i in lst if i == 0])}")
+	print(f"Number of non-zero IoU: {len([i for i in lst if i != 0])}")
+	print(f"Number of zero IoU: {len([i for i in lst if i == 0])}")
+	f, ax = plt.subplots(figsize=(7, 5))
+	sns.despine(f)
+	sns.histplot(
+		lst,
+		palette="light:m_r",
+		edgecolor=".3",
+		linewidth=.5,
+	)
+	plt.xlabel("IoU")
+	# sns.set_theme()
+	# plt.hist(lst)
+	plt.title("Histogram of IoUs")
+	if filename is not None:
+		plt.savefig(f"{filename}.svg", format="svg")
+	plt.show()
 	return sum(lst) / len(lst)
 
 
