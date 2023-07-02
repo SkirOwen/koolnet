@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import os.path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import cmocean as cm
 
 from koolnet.utils.file_ops import load_h5
 from koolnet.data.windows import gen_window_coord
+from koolnet.utils.directories import get_plots_dir
 
 
 def plot_multiple(
@@ -16,6 +19,7 @@ def plot_multiple(
 		title: None | str = None,
 		cmap=cm.cm.gray,
 		draw_line: bool = False,
+		model_name: str = "placeholder",
 ):
 	plot_x, plot_y = xi.shape[:2]
 
@@ -78,7 +82,10 @@ def plot_multiple(
 	axs.set_aspect('equal')
 	plt.tight_layout()
 	plt.title(title)
-	plt.savefig(f"{title}_multiplot.png", dpi=400)
+	plt.savefig(
+		os.path.join(get_plots_dir(), f"{model_name}_{title}_multiplot.png")
+		, dpi=400
+	)
 	plt.show()
 
 
