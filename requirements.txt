@@ -1,12 +1,16 @@
 cmocean
-ipython
 h5py
 hyperopt
+ipython
+lightning
 matplotlib
 numpy
 pandas
-pytorch
 rich
 scikit-learn
 seaborn
+torch
+--index-url https://download.pytorch.org/whl/cu118; system_platform  != 'Darwin'
+torchaudio
+torchvision
 tqdm

@@ -1,0 +1,23 @@
+name: koolnet
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.10
+  - cmocean
+  - h5py
+  - hyperopt
+  - ipython
+  - lightning
+  - matplotlib
+  - numpy
+  - pandas
+  - rich
+  - scikit-learn
+  - seaborn
+  - pytorch::pytorch
+  - pytorch::pytorch-cuda=11.8
+  - pytorch::torchvision
+  - pytorch::torchaudio
+  - tqdm
