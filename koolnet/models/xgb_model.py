@@ -1,18 +1,19 @@
-import numpy as np
+from __future__ import annotations
+
 import matplotlib.pyplot as plt
-import xgboost
-
-import xgboost as xgb
+import numpy as np
 import seaborn as sns
-
-from sklearn.model_selection import train_test_split
+import sklearn
+import xgboost as xgb
 
 from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
 
 from koolnet import logger
 from koolnet import RANDOM_SEED
 from koolnet.data.preprocessing import get_allmode_data
-from koolnet.utils.file_ops import load_h5
+from koolnet.utils import load_h5
+from koolnet.utils.metrics import avg_rel_iou
 from koolnet.utils.plotting import plot_multiple
 from koolnet.utils.plotting import plot_pred_obs_dist
 from koolnet.models.predict import chain_mutliple

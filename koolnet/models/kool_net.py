@@ -32,10 +32,9 @@ from koolnet.data.preprocessing import get_allmode_data
 from koolnet.dataloading.koolload import KoolDataModule
 from koolnet.dataset.koolset import Koolset
 from koolnet.utils.file_ops import load_h5
-from koolnet.utils.plotting import plot_multiple
+from koolnet.utils.plotting import plot_multiple, plot_pred_obs_dist
 from koolnet.utils.metrics import avg_rel_iou
 
-from koolnet.models.random_forest import plot_pred_obs_dist
 from koolnet.utils.metrics import rel_iou
 from koolnet.data.windows import get_data_window, window_coord_centre_point
 
