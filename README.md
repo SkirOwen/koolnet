@@ -17,9 +17,7 @@ https://github.com/SkirOwen/ResDMDpy
 The code was created using `python=3.11`, it should support `3.8` but has not been tested, nor it is guaranteed
 it will stay compatible.
 We recommend using `conda` or [`mamba`](https://mamba.readthedocs.io/en/latest/installation.html) to install
-the dependencies.  
-You can install with `pip`. However, since we are dependent on `rasterio`, that requires C compiled code,
-we cannot guarantee the installation with `pip` on Windows. 
+the dependencies if the GPU support is wanted. otherwise pip should suffice.
 
 ### CONDA | CUDA
 ```shell
