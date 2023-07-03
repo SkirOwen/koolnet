@@ -32,7 +32,7 @@ def test_boost(boost_model: sklearn.pipeline.Pipelin, X_test: np.ndarray, y_test
 	return rmse, r2
 
 
-def run_boost_plot_pred(win_per_mode: int) -> None:
+def run_boost_plot_pred(win_per_mode: int, mode_for_plots: int = 20) -> None:
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "xi_v3.h5"
@@ -54,8 +54,7 @@ def run_boost_plot_pred(win_per_mode: int) -> None:
 	y_pred = boost_model.predict(X_test)
 
 	data, metadata = load_h5(filepath)
-	mode = 20
-	mode_idx = list(metadata["powers"]).index(mode)
+	mode_idx = list(metadata["powers"]).index(mode_for_plots)
 	xi = data[mode_idx]
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 

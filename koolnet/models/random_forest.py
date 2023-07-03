@@ -66,7 +66,7 @@ def hyper_param(X_train, y_train, jobs: int = -1):
 	print(grid_search.best_estimator_)
 
 
-def run_rf_plot_pred(win_per_mode):
+def run_rf_plot_pred(win_per_mode, mode_for_plots: int = 20):
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "cylinder_xi_1_50.h5"
@@ -88,8 +88,7 @@ def run_rf_plot_pred(win_per_mode):
 	y_pred = rf_model.predict(X_test)
 
 	data, metadata = load_h5(filepath)
-	mode = 20
-	mode_idx = list(metadata["powers"]).index(mode)
+	mode_idx = list(metadata["powers"]).index(mode_for_plots)
 	xi = data[mode_idx]
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 
