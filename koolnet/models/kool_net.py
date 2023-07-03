@@ -255,9 +255,11 @@ def run_model():
 	koolset_test = Koolset(X_test, y_test, w_test)
 	koolset_predict = Koolset(X_test, y_test, w_test)
 
-	# model = KoolNet(2 * len(allmode))
-	# model(X_train[0])
-	model = KoolNet.load_from_checkpoint("G:\\PycharmProjects\\ai4er\koolnet\\tb_logs\\lightning_logs\\version_36\\checkpoints\\chk\\epoch=518-val_loss=3.3826.ckpt")
+	model = KoolNet(2 * len(allmode))
+	model(X_train[0])
+	# model = KoolNet.load_from_checkpoint(
+	# 	"G:\\PycharmProjects\\ai4er\koolnet\\tb_logs\\lightning_logs\\version_36\\checkpoints\\chk\\epoch=518-val_loss=3.3826.ckpt"
+	# )
 
 	# Ensure that all operations are deterministic on GPU (if used) for reproducibility
 	torch.backends.cudnn.deterministic = True
