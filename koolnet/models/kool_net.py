@@ -143,8 +143,8 @@ class KoolNet(pl.LightningModule):
 		optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
 		lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
 			optimizer,
-			T_max=100,# 500 # 100
-			eta_min=1e-6    # 1e-7
+			T_max=100,
+			eta_min=1e-6,
 		)
 		return {
 			"optimizer": optimizer,
