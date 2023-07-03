@@ -36,7 +36,34 @@ def get_mode_data(filepath: str, mode: int) -> tuple:
 	return data_window, obst_xy
 
 
-def get_data_mode(allmodes, data, window_coords, for_rf):
+def get_data_modes(allmodes: Iterable, data: np.ndarray, window_coords: tuple, for_rf: bool) -> tuple[list, list]:
+	"""
+	Get the data in a window across multiple modes.
+	The data given per mode is a tuple of the real and abs.
+	If it is for a decision tree, set for_rf to True, this will sum all the
+	values in a window to one value.
+
+	Parameters
+	----------
+	allmodes : Iterable
+		An iterable of all the modes to use.
+	data : ndarray
+		2D ndarray of the data the to slice
+	window_coords : tuples of 4 ints
+		Tuple of the opposite corner of the window.
+		Should be ordered as lowest (x, y) corner followed by the opposite, as:
+		wx0, wy0, wx1, wy1
+	for_rf : bool
+		If False, return the window as is.
+		Otherwise, flattens it and sums it to get one number per window,
+		to be compatible with decision trees.
+
+	Returns
+	-------
+	tuple of list
+		A list of the window for the real part, and one for the abs.
+
+	"""
 	x_mode_r = []
 	x_mode_abs = []
 	for mode in allmodes:
@@ -115,7 +142,7 @@ def data_window_mode(
 
 		y_data.append((dist_x, dist_y))
 
-		x_mode_r, x_mode_abs = get_data_mode(allmodes, data, window_coords, for_rf)
+		x_mode_r, x_mode_abs = get_data_modes(allmodes, data, window_coords, for_rf)
 
 		if mode_collapse:
 			x_data.append((np.sum(x_mode_r), np.sum(x_mode_abs)))
