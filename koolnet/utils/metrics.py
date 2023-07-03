@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
+from typing import Sequence
 
-def cal_iou(pred, obst_pos) -> float:
+
+def iou(pred: Sequence[float, float, float], obst_pos: Sequence[float, float, float]) -> float:
 	# assuming same radius
 	xp, yp, rp = pred
 	xo, yo, ro = obst_pos
@@ -15,9 +17,9 @@ def cal_iou(pred, obst_pos) -> float:
 	d = np.sqrt((xp - xo)**2 + (yp - yo)**2)
 
 	if d >= rp + ro:
-		iou = 0
+		iou_val = 0
 	elif d <= np.abs(rp - ro):
-		iou = 1
+		iou_val = 1
 	else:
 		ai = (
 			rp**2 * np.arccos((d**2 + rp**2 - ro**2) / (2 * d * rp)) +
@@ -26,19 +28,23 @@ def cal_iou(pred, obst_pos) -> float:
 		)
 		au = area_p + area_o - ai
 
-		iou = ai / au
+		iou_val = ai / au
 
-	return iou
+	return iou_val
 
 
-def rel_iou(rel_pred, obst_pos, win_pos) -> float:
-	# TODO: assuming same size for pred as obst
+def rel_iou(rel_pred: Sequence, obst_pos: Sequence, win_pos: Sequence) -> float:
+	if len(rel_pred) == 2:
+		radius_pred = obst_pos[2]
+	else:
+		radius_pred = rel_pred[1]
+
 	wx0, wy0, _, _ = win_pos
-	pred = (wx0 + rel_pred[0]), (wy0 + rel_pred[1]), obst_pos[2]
-	return cal_iou(pred, obst_pos)
+	pred = (wx0 + rel_pred[0]), (wy0 + rel_pred[1]), radius_pred
+	return iou(pred, obst_pos)
 
 
-def avg_rel_iou(rel_preds, obst_pos, win_poss, filename: None | str = None) -> float:
+def avg_rel_iou(rel_preds: Sequence, obst_pos: Sequence, win_poss: Sequence, filename: None | str = None) -> float:
 	lst = []
 	for pred, w in zip(rel_preds, win_poss):
 		lst.append(rel_iou(pred, obst_pos, w))
@@ -53,8 +59,6 @@ def avg_rel_iou(rel_preds, obst_pos, win_poss, filename: None | str = None) -> f
 		linewidth=.5,
 	)
 	plt.xlabel("IoU")
-	# sns.set_theme()
-	# plt.hist(lst)
 	plt.title("Histogram of IoUs")
 	if filename is not None:
 		plt.savefig(f"{filename}.svg", format="svg")
