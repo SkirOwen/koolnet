@@ -29,7 +29,6 @@ def test_boost(boost_model, X_test, y_test):
 	y_pred = boost_model.predict(X_test)
 	rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 	r2 = r2_score(y_test, y_pred)
-
 	return rmse, r2
 
 
@@ -62,12 +61,8 @@ def run_boost_plot_pred(win_per_mode: int) -> None:
 
 	logger.info("Plotting")
 	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing")
-	avg_test_iou = avg_rel_iou(y_pred, obst_pos, w_test, filename="test_iou")
-	print(f"{avg_test_iou = }")
 
 	y_train_pred = boost_model.predict(X_train)
-	avg_train_iou = avg_rel_iou(y_train_pred, obst_pos, w_train, filename="train_iou")
-	print(f"{avg_train_iou = }")
 	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
 
@@ -75,14 +70,18 @@ def run_boost_plot_pred(win_per_mode: int) -> None:
 
 	print("figure importance")
 	plt.figure(figsize=(20, 20))
-	xgboost.plot_importance(boost_model, ax=plt.gca())
+	xgb.plot_importance(boost_model, ax=plt.gca())
 	plt.savefig("feature_importance.svg", format="svg")
 	plt.show()
 
+	sns.set_theme()
+	avg_test_iou = avg_rel_iou(y_pred, obst_pos, w_test, filename="test_iou")
+	print(f"{avg_test_iou = }")
+	avg_train_iou = avg_rel_iou(y_train_pred, obst_pos, w_train, filename="train_iou")
+	print(f"{avg_train_iou = }")
+
 	chain_mutliple(w_test, boost_model, obst_pos, data, allmode, True)
 
-	return rmse, r2
-	# print(f"{rmse = }\n{r2 = }")
 
 
 def main():
