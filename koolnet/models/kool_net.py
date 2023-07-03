@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import lightning.pytorch as pl
-import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -10,13 +9,11 @@ import seaborn as sns
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.callbacks import ModelSummary, RichModelSummary
 from lightning.pytorch.callbacks.early_stopping import EarlyStopping
-from lightning.pytorch.loggers import TensorBoardLogger
 from lightning.pytorch.callbacks import RichProgressBar, TQDMProgressBar
 from lightning.pytorch.loggers import TensorBoardLogger
 
 from torch import nn
 from torch.utils.data import DataLoader
-from torchvision import transforms
 from torchmetrics.functional import r2_score
 
 from sklearn.model_selection import train_test_split
@@ -29,11 +26,10 @@ from lightning.pytorch.utilities.types import STEP_OUTPUT
 from koolnet import logger
 from koolnet import RANDOM_SEED
 from koolnet.data.preprocessing import data_window_mode
-from koolnet.data.windows import get_data_window, window_coord_centre_point
 from koolnet.dataloading.koolload import KoolDataModule
 from koolnet.dataset.koolset import Koolset
 from koolnet.utils import load_h5
-from koolnet.utils.metrics import avg_rel_iou, rel_iou
+from koolnet.utils.metrics import avg_rel_iou
 from koolnet.utils.plotting import plot_multiple, plot_pred_obs_dist
 from koolnet.models.predict import chain_multiple
 
