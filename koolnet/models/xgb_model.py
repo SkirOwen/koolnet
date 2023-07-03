@@ -71,10 +71,10 @@ def run_boost_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20) -> N
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 
 	logger.info("Plotting")
-	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing")
+	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing", model_name="XGBoost")
 
 	y_train_pred = boost_model.predict(X_train)
-	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
+	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training", model_name="XGBoost")
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
 
 	boost_model.get_booster().feature_names = [f"{t}_{m}" for m in allmode for t in ["real", "abs"]]

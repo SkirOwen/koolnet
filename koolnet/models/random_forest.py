@@ -108,10 +108,10 @@ def run_rf_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20):
 	# Plotting on Flow
 	logger.info("Plotting")
 	# Test
-	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing", draw_line=False)
+	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing", draw_line=False, model_name="RF")
 	# Train
 	y_train_pred = rf_model.predict(X_train)
-	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
+	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training", model_name="RF")
 
 	sns.set_theme()
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
