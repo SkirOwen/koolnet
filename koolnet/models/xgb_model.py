@@ -19,13 +19,13 @@ from koolnet.utils.plotting import plot_pred_obs_dist
 from koolnet.models.predict import chain_mutliple
 
 
-def train_boost(X_train, y_train, n_esti: int = 100):
+def train_boost(X_train: np.ndarray, y_train: np.ndarray, n_esti: int = 100) -> sklearn.pipeline.Pipelin:
 	boost_model = xgb.XGBRegressor(n_estimators=n_esti, random_state=RANDOM_SEED, tree_method="exact")
 	boost_model.fit(X_train, y_train)
 	return boost_model
 
 
-def test_boost(boost_model, X_test, y_test):
+def test_boost(boost_model: sklearn.pipeline.Pipelin, X_test: np.ndarray, y_test: np.ndarray) -> tuple[float, float]:
 	y_pred = boost_model.predict(X_test)
 	rmse = np.sqrt(mean_squared_error(y_test, y_pred))
 	r2 = r2_score(y_test, y_pred)
