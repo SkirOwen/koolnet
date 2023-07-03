@@ -27,7 +27,7 @@ def parse_args() -> Namespace:
 	)
 
 	parser.add_argument(
-		"-m", "-model",
+		"-m", "--model",
 		help="the type of the model to run, can be `rf` / `xgboost` / `cnn`"
 	)
 

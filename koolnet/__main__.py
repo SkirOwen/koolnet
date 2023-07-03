@@ -19,10 +19,15 @@ def main():
 			args.win_per_mode = 2000
 
 	if args.model == "rf":
+		logger.info(f"Running {args.model} with {args.win_per_mode} windows per mode.")
 		run_rf_plot_pred(win_per_mode=args.win_per_mode)
+
 	elif args.model == "xgboost":
+		logger.info(f"Running {args.model} with {args.win_per_mode} windows per mode.")
 		run_boost_plot_pred(win_per_mode=args.win_per_mode)
+
 	elif args.model == "cnn":
+		logger.info(f"Running {args.model} with {args.win_per_mode} windows per mode.")
 		run_model(win_per_mode=args.win_per_mode, train=True)
 
 

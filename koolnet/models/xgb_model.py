@@ -9,6 +9,11 @@ import xgboost as xgb
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich import box
+
 from koolnet import logger
 from koolnet import RANDOM_SEED
 from koolnet.data.preprocessing import data_window_mode
@@ -33,6 +38,7 @@ def test_boost(boost_model: sklearn.pipeline.Pipelin, X_test: np.ndarray, y_test
 
 
 def run_boost_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20) -> None:
+	console = Console()
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "xi_v3.h5"
@@ -50,7 +56,13 @@ def run_boost_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20) -> N
 
 	rmse, r2 = test_boost(boost_model, X_test, y_test)
 
-	print(f"{rmse = }, {r2 = }")
+	console.print(
+		Panel(
+			f"{rmse = }\n"
+			f"{r2   = }",
+			title="Results of the XGBoost"
+		)
+	)
 	y_pred = boost_model.predict(X_test)
 
 	data, metadata = load_h5(filepath)
@@ -74,13 +86,32 @@ def run_boost_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20) -> N
 	plt.show()
 
 	sns.set_theme()
-	avg_test_iou = avg_rel_iou(y_pred, obst_pos, w_test, filename="test_iou")
-	print(f"{avg_test_iou = }")
-	avg_train_iou = avg_rel_iou(y_train_pred, obst_pos, w_train, filename="train_iou")
-	print(f"{avg_train_iou = }")
+
+	# IoU
+	pred_lst_iou = avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="pred_iou")
+	train_lst_iou = avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="train_iou")
+
+	pred_avg_iou = sum(pred_lst_iou) / len(pred_lst_iou)
+	train_avg_iou = sum(train_lst_iou) / len(train_lst_iou)
+
+	table_iou = Table(title="IoU", box=box.MINIMAL)
+	table_iou.add_column("Type", justify="left", no_wrap=True)
+	table_iou.add_column("Prediction", justify="right", no_wrap=True)
+	table_iou.add_column("Training", justify="right", no_wrap=True)
+
+	pred_z_iou = len([i for i in pred_lst_iou if i == 0])
+	pred_nz_iou = len([i for i in pred_lst_iou if i != 0])
+
+	train_z_iou = len([i for i in train_lst_iou if i == 0])
+	train_nz_iou = len([i for i in train_lst_iou if i != 0])
+
+	table_iou.add_row("Non-Zero IoU", str(pred_nz_iou), str(train_nz_iou))
+	table_iou.add_row("Zero IoU", str(pred_z_iou), str(train_z_iou))
+	table_iou.add_row("Average", str(pred_avg_iou), str(train_avg_iou))
+
+	console.print(table_iou)
 
 	chain_multiple(w_test, boost_model, obst_pos, data, allmode, True)
-
 
 
 def main():

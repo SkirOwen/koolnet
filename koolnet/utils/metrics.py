@@ -44,17 +44,14 @@ def rel_iou(rel_pred: Sequence, obst_pos: Sequence, win_pos: Sequence) -> float:
 	return iou(pred, obst_pos)
 
 
-def avg_rel_iou(rel_preds: Sequence, obst_pos: Sequence, win_poss: Sequence, filename: None | str = None) -> float:
+def avg_rel_iou(rel_preds: Sequence, obst_pos: Sequence, win_poss: Sequence, filename: None | str = None) -> list:
 	lst = []
 	for pred, w in zip(rel_preds, win_poss):
 		lst.append(rel_iou(pred, obst_pos, w))
-	print(f"Number of non-zero IoU: {len([i for i in lst if i != 0])}")
-	print(f"Number of zero IoU: {len([i for i in lst if i == 0])}")
 	f, ax = plt.subplots(figsize=(7, 5))
 	sns.despine(f)
 	sns.histplot(
 		lst,
-		palette="light:m_r",
 		edgecolor=".3",
 		linewidth=.5,
 	)
@@ -63,7 +60,9 @@ def avg_rel_iou(rel_preds: Sequence, obst_pos: Sequence, win_poss: Sequence, fil
 	if filename is not None:
 		plt.savefig(f"{filename}.svg", format="svg")
 	plt.show()
-	return sum(lst) / len(lst)
+	# print(f"Number of non-zero IoU: {len([i for i in lst if i != 0])}")
+	# print(f"Number of zero IoU: {len([i for i in lst if i == 0])}")
+	return lst
 
 
 def shap_expl(model, X_train):
