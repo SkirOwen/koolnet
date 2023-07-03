@@ -153,8 +153,7 @@ def run_predict(koolset: Koolset, model: pl.LightningModule) -> tuple[list, list
 	return y_pred, windows
 
 
-def run_model(win_per_mode: None | int = None, train: bool = False, mode_for_plots: int = 20):
-	win_per_mode = 4000 if win_per_mode is None else win_per_mode
+def run_model(win_per_mode: int = 4000, train: bool = False, mode_for_plots: int = 20):
 	pl.seed_everything(RANDOM_SEED)
 	test_size = 0.2
 	val_size = 0.2 / 0.6     # relative to the whole dataset
