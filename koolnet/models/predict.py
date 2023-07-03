@@ -7,14 +7,8 @@ import lightning as pl
 
 from koolnet import logger
 from koolnet.utils.metrics import rel_iou
-from koolnet.data.windows import get_data_window, window_coord_centre_point
-from koolnet.data.preprocessing import get_data_modes
-
-def dist_win_obst(obst_xy: tuple[int, int], win_coords: tuple[int, int, int, int]) -> tuple[int, int]:
-	x0, y0, _, _ = win_coords
-	dx = obst_xy[0] - x0
-	dy = obst_xy[1] - y0
-	return dx, dy
+from koolnet.data.windows import window_coord_centre_point
+from koolnet.data.preprocessing import get_data_modes, dist_win_obst
 
 
 def chain_predict_one(window_coor, model, obst_pos, data, allmodes, for_rf):
