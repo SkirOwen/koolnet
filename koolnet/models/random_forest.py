@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -66,7 +68,8 @@ def hyper_param(X_train, y_train, jobs: int = -1):
 	print(grid_search.best_estimator_)
 
 
-def run_rf_plot_pred(win_per_mode, mode_for_plots: int = 20):
+def run_rf_plot_pred(win_per_mode: None | int, mode_for_plots: int = 20):
+	win_per_mode = 2000 if win_per_mode is None else win_per_mode
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "cylinder_xi_1_50.h5"

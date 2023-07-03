@@ -32,7 +32,8 @@ def test_boost(boost_model: sklearn.pipeline.Pipelin, X_test: np.ndarray, y_test
 	return rmse, r2
 
 
-def run_boost_plot_pred(win_per_mode: int, mode_for_plots: int = 20) -> None:
+def run_boost_plot_pred(win_per_mode: None | int, mode_for_plots: int = 20) -> None:
+	win_per_mode = 2000 if win_per_mode is None else win_per_mode
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "xi_v3.h5"
