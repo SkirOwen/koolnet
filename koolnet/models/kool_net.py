@@ -58,10 +58,7 @@ class KoolNet(pl.LightningModule):
 
 			nn.Conv2d(384, 384, kernel_size=(3, 3), padding=1),
 			nn.Tanh(),
-			nn.MaxPool2d(
-				kernel_size=3,
-				# stride=2,
-			),
+			nn.MaxPool2d(kernel_size=3),
 		)
 
 		self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
