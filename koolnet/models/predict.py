@@ -8,7 +8,7 @@ import lightning as pl
 from koolnet import logger
 from koolnet.utils.metrics import rel_iou
 from koolnet.data.windows import get_data_window, window_coord_centre_point
-
+from koolnet.data.preprocessing import get_data_mode
 
 def dist_win_obst(obst_xy: tuple[int, int], win_coords: tuple[int, int, int, int]) -> tuple[int, int]:
 	x0, y0, _, _ = win_coords
@@ -34,24 +34,8 @@ def chain_predict_one(window_coor, model, obst_pos, data, allmodes, for_rf):
 	k = 0
 
 	while score <= 0:
-		x_mode_r = []
-		x_mode_abs = []
 		x_data = []
-
-		for mode in allmodes:
-			# koopmode = get_koop_mode(data, mode)
-			# TODO: fix this!
-			mode_idx = list(allmodes).index(mode)
-			koopmode = data[mode_idx]
-
-			data_window = get_data_window(koopmode, window_coor)
-			wind_r, wind_abs = np.real(data_window), np.abs(data_window)
-			if for_rf:
-				x_mode_r.append(wind_r.flatten().sum())
-				x_mode_abs.append(wind_abs.flatten().sum())
-			else:
-				x_mode_r.append(wind_r)
-				x_mode_abs.append(wind_abs)
+		x_mode_r, x_mode_abs = get_data_mode(allmodes, data, window_coor, for_rf)
 		x_data.append((*x_mode_r, *x_mode_abs))
 		x_data = np.array(x_data)
 
