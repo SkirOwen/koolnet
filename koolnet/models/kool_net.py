@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import numpy as np
 import lightning.pytorch as pl
+import matplotlib.pyplot as plt
+import numpy as np
 import torch
 import torch.nn.functional as F
 import seaborn as sns
-import matplotlib.pyplot as plt
-
-from tqdm import tqdm
 
 from lightning.pytorch.callbacks import ModelCheckpoint
 from lightning.pytorch.callbacks import ModelSummary, RichModelSummary
@@ -23,6 +21,8 @@ from torchmetrics.functional import r2_score
 
 from sklearn.model_selection import train_test_split
 
+from tqdm import tqdm
+
 from typing import Any
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 
@@ -32,12 +32,10 @@ from koolnet.data.preprocessing import data_window_mode
 from koolnet.data.windows import get_data_window, window_coord_centre_point
 from koolnet.dataloading.koolload import KoolDataModule
 from koolnet.dataset.koolset import Koolset
-from koolnet.utils.file_ops import load_h5
+from koolnet.utils import load_h5
+from koolnet.utils.metrics import avg_rel_iou, rel_iou
 from koolnet.utils.plotting import plot_multiple, plot_pred_obs_dist
-from koolnet.utils.metrics import avg_rel_iou
-
-from koolnet.utils.metrics import rel_iou
-from koolnet.data.windows import get_data_window, window_coord_centre_point
+from koolnet.models.predict import chain_mutliple
 
 
 class KoolNet(pl.LightningModule):
