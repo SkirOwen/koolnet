@@ -126,7 +126,34 @@ class KoolNet(pl.LightningModule):
 		}
 
 
-def run_model():
+def run_predict(koolset: Koolset, model: pl.LightningModule) -> tuple[list, list]:
+	"""
+	Run the model on a koolset to generate predictions.
+
+	Parameters
+	----------
+	koolset : Dataset
+		The Dataset to use.
+	model : pl.LightningModule
+
+	Returns
+	-------
+	tuple
+		Tuple of the prediction and the associated windows.
+	"""
+	y_pred = []
+	windows = []
+	for i in tqdm(range(len(koolset)), desc="Test"):
+		x = koolset[i][0]
+		y = koolset[i][1]
+		w = koolset.get_window(i).tolist()
+		windows.append(w)
+		y_pred_test = model(x.unsqueeze(0)).detach()[0].tolist()
+		y_pred.append(y_pred_test)
+	return y_pred, windows
+
+
+def run_model(train: bool = False):
 	pl.seed_everything(RANDOM_SEED)
 	win_per_mode = 4000
 	test_size = 0.2
@@ -155,11 +182,12 @@ def run_model():
 	koolset_test = Koolset(X_test, y_test, w_test)
 	koolset_predict = Koolset(X_test, y_test, w_test)
 
-	model = KoolNet(2 * len(allmode))
-	model(X_train[0])
-	# model = KoolNet.load_from_checkpoint(
-	# 	"G:\\PycharmProjects\\ai4er\koolnet\\tb_logs\\lightning_logs\\version_36\\checkpoints\\chk\\epoch=518-val_loss=3.3826.ckpt"
-	# )
+	if train:
+		model = KoolNet(2 * len(allmode))
+	else:
+		model = KoolNet.load_from_checkpoint(
+			"G:\\PycharmProjects\\ai4er\koolnet\\tb_logs\\lightning_logs\\version_36\\checkpoints\\chk\\epoch=518-val_loss=3.3826.ckpt"
+		)
 
 	# Ensure that all operations are deterministic on GPU (if used) for reproducibility
 	torch.backends.cudnn.deterministic = True
@@ -227,26 +255,9 @@ def run_model():
 	trainer.test(model=model, dataloaders=test_loader)
 
 	model.eval()
-	y_pred = []
-	w_test = []
-	for i in tqdm(range(len(koolset_test)), desc="Test"):
-		x = koolset_test[i][0]
-		y = koolset_test[i][1]
-		w = koolset_test.get_window(i).tolist()
-		w_test.append(w)
-		y_pred_test = model(x.unsqueeze(0)).detach()[0].tolist()
-		y_pred.append(y_pred_test)
-	#
 
-	y_train_pred = []
-	w_train = []
-	for i in tqdm(range(len(koolset_train)), desc="Test"):
-		x = koolset_train[i][0]
-		y = koolset_train[i][1]
-		w = koolset_train.get_window(i).tolist()
-		w_train.append(w)
-		y_train_ = model(x.unsqueeze(0)).detach()[0].tolist()
-		y_train_pred.append(y_train_)
+	y_pred, w_test = run_predict(koolset_test, model)
+	y_train_pred, w_train = run_predict(koolset_train, model)
 
 	data, metadata = load_h5(filepath)
 	mode = 20
