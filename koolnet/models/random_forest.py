@@ -45,7 +45,7 @@ def test_rf(rf_model, X_test, y_test):
 
 
 def hyper_param(X_train, y_train, jobs: int = -1):
-	from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+	from sklearn.model_selection import GridSearchCV
 
 	max_depth = [x for x in range(10, 120, 10)]
 	max_depth.append(None)
