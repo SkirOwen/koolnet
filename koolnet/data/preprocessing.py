@@ -36,7 +36,27 @@ def get_mode_data(filepath: str, mode: int) -> tuple:
 	return data_window, obst_xy
 
 
-def get_allmode_data(
+def get_data_mode(allmodes, data, window_coords, for_rf):
+	x_mode_r = []
+	x_mode_abs = []
+	for mode in allmodes:
+		# koopmode = get_koop_mode(data, mode)
+		# TODO: fix this!
+		mode_idx = list(allmodes).index(mode)
+		koopmode = data[mode_idx]
+
+		data_window = get_data_window(koopmode, window_coords)
+		wind_r, wind_abs = np.real(data_window), np.abs(data_window)
+		if for_rf:
+			x_mode_r.append(wind_r.flatten().sum())
+			x_mode_abs.append(wind_abs.flatten().sum())
+		else:
+			x_mode_r.append(wind_r)
+			x_mode_abs.append(wind_abs)
+	return x_mode_r, x_mode_abs
+
+
+def data_window_mode(
 		filepath: str,
 		for_rf: bool,
 		win_per_mode: int,
@@ -94,22 +114,8 @@ def get_allmode_data(
 			dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
 
 		y_data.append((dist_x, dist_y))
-		x_mode_r = []
-		x_mode_abs = []
-		for mode in allmodes:
-			# koopmode = get_koop_mode(data, mode)
-			# TODO: fix this!
-			mode_idx = list(metadata["powers"]).index(mode)
-			koopmode = data[mode_idx]
 
-			data_window = get_data_window(koopmode, window_coords)
-			wind_r, wind_abs = np.real(data_window), np.abs(data_window)
-			if for_rf:
-				x_mode_r.append(wind_r.flatten().sum())
-				x_mode_abs.append(wind_abs.flatten().sum())
-			else:
-				x_mode_r.append(wind_r)
-				x_mode_abs.append(wind_abs)
+		x_mode_r, x_mode_abs = get_data_mode(allmodes, data, window_coords, for_rf)
 
 		if mode_collapse:
 			x_data.append((np.sum(x_mode_r), np.sum(x_mode_abs)))

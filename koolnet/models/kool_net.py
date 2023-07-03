@@ -28,7 +28,8 @@ from lightning.pytorch.utilities.types import STEP_OUTPUT
 
 from koolnet import logger
 from koolnet import RANDOM_SEED
-from koolnet.data.preprocessing import get_allmode_data
+from koolnet.data.preprocessing import data_window_mode
+from koolnet.data.windows import get_data_window, window_coord_centre_point
 from koolnet.dataloading.koolload import KoolDataModule
 from koolnet.dataset.koolset import Koolset
 from koolnet.utils.file_ops import load_h5
@@ -255,7 +256,7 @@ def run_model():
 	np.random.seed(RANDOM_SEED)
 	filepath = "cylinder_xi_1_50.h5"
 
-	X, y, w, allmode = get_allmode_data(
+	X, y, w, allmode = data_window_mode(
 		filepath=filepath,
 		for_rf=False,
 		win_per_mode=win_per_mode,

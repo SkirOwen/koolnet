@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 
 from koolnet import logger
 from koolnet import RANDOM_SEED
-from koolnet.data.preprocessing import get_allmode_data
+from koolnet.data.preprocessing import data_window_mode
 from koolnet.utils import load_h5
 from koolnet.utils.plotting import plot_multiple, plot_pred_obs_dist
 from koolnet.utils.metrics import avg_rel_iou
@@ -71,7 +71,7 @@ def run_rf_plot_pred(win_per_mode):
 	np.random.seed(RANDOM_SEED)
 	filepath = "cylinder_xi_1_50.h5"
 
-	X, y, w, allmode = get_allmode_data(
+	X, y, w, allmode = data_window_mode(
 		filepath=filepath,
 		for_rf=True,
 		win_per_mode=win_per_mode,

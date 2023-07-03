@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset
 
-from koolnet.data.preprocessing import get_allmode_data
+from koolnet.data.preprocessing import data_window_mode
 
 
 class Koolset(Dataset):
