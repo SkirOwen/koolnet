@@ -45,26 +45,6 @@ class KoolNet(pl.LightningModule):
 		self.mode_nbr = mode_nbr
 		self.lr = lr
 
-		# self.features = nn.Sequential(
-		# 	nn.Conv2d(self.mode_nbr, 64, kernel_size=3, stride=1, padding=2),
-		# 	nn.Tanh(),
-		# 	nn.MaxPool2d(kernel_size=3, stride=2),
-		#
-		# 	nn.Conv2d(64, 192, kernel_size=5, padding=2),
-		# 	nn.Tanh(),
-		# 	nn.MaxPool2d(kernel_size=3, stride=2),
-		#
-		# 	nn.Conv2d(192, 384, kernel_size=3, padding=1),
-		# 	nn.Tanh(),
-		#
-		# 	nn.Conv2d(384, 256, kernel_size=3, padding=1),
-		# 	nn.Tanh(),
-		#
-		# 	nn.Conv2d(256, 256, kernel_size=3, padding=1),
-		# 	nn.Tanh(),
-		# 	nn.MaxPool2d(kernel_size=3, stride=2),
-		# )
-
 		self.conv = nn.Sequential(
 			nn.Conv2d(self.mode_nbr, 96, kernel_size=(3, 3), stride=1, padding=2),
 			nn.Tanh(),
