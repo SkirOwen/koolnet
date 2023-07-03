@@ -35,7 +35,7 @@ from koolnet.dataset.koolset import Koolset
 from koolnet.utils import load_h5
 from koolnet.utils.metrics import avg_rel_iou, rel_iou
 from koolnet.utils.plotting import plot_multiple, plot_pred_obs_dist
-from koolnet.models.predict import chain_mutliple
+from koolnet.models.predict import chain_multiple
 
 
 class KoolNet(pl.LightningModule):
@@ -272,7 +272,7 @@ def run_model():
 	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
 	print(avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="train_iou"))
 
-	chain_mutliple(w_test, model, obst_pos, data, allmode, False)
+	chain_multiple(w_test, model, obst_pos, data, allmode, False)
 
 
 if __name__ == "__main__":

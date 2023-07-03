@@ -16,7 +16,7 @@ from koolnet.utils import load_h5
 from koolnet.utils.metrics import avg_rel_iou
 from koolnet.utils.plotting import plot_multiple
 from koolnet.utils.plotting import plot_pred_obs_dist
-from koolnet.models.predict import chain_mutliple
+from koolnet.models.predict import chain_multiple
 
 
 def train_boost(X_train: np.ndarray, y_train: np.ndarray, n_esti: int = 100) -> sklearn.pipeline.Pipelin:
@@ -80,7 +80,7 @@ def run_boost_plot_pred(win_per_mode: int) -> None:
 	avg_train_iou = avg_rel_iou(y_train_pred, obst_pos, w_train, filename="train_iou")
 	print(f"{avg_train_iou = }")
 
-	chain_mutliple(w_test, boost_model, obst_pos, data, allmode, True)
+	chain_multiple(w_test, boost_model, obst_pos, data, allmode, True)
 
 
 

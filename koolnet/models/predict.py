@@ -71,7 +71,7 @@ def chain_predict_one(window_coor, model, obst_pos, data, allmodes, for_rf):
 	return div_count - 1
 
 
-def chain_mutliple(windows, model, obst_pos, data, allmodes, for_rf):
+def chain_multiple(windows, model, obst_pos, data, allmodes, for_rf):
 	rslt = []
 	for w in windows:
 		div_count = chain_predict_one(w, model, obst_pos, data, allmodes, for_rf)

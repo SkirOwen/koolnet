@@ -13,7 +13,7 @@ from koolnet.data.preprocessing import data_window_mode
 from koolnet.utils import load_h5
 from koolnet.utils.plotting import plot_multiple, plot_pred_obs_dist
 from koolnet.utils.metrics import avg_rel_iou
-from koolnet.models.predict import chain_mutliple
+from koolnet.models.predict import chain_multiple
 
 
 def train_rf(X_train, y_train, n_esti: int = 210):
@@ -137,7 +137,7 @@ def run_rf_plot_pred(win_per_mode):
 	print("Training")
 	print(avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="train_iou"))
 
-	chain_mutliple(w_test, rf_model, obst_pos, data, allmode, True)
+	chain_multiple(w_test, rf_model, obst_pos, data, allmode, True)
 	return rmse, r2
 	# print(f"{rmse = }\n{r2 = }")
 
