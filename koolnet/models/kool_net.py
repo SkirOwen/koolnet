@@ -153,7 +153,7 @@ def run_predict(koolset: Koolset, model: pl.LightningModule) -> tuple[list, list
 	return y_pred, windows
 
 
-def run_model(train: bool = False):
+def run_model(train: bool = False, mode_for_plots: int = 20):
 	pl.seed_everything(RANDOM_SEED)
 	win_per_mode = 4000
 	test_size = 0.2
@@ -260,7 +260,7 @@ def run_model(train: bool = False):
 	y_train_pred, w_train = run_predict(koolset_train, model)
 
 	data, metadata = load_h5(filepath)
-	mode = 20
+	mode = mode_for_plots
 	mode_idx = list(metadata["powers"]).index(mode)
 	xi = data[mode_idx]
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
