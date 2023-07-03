@@ -34,3 +34,31 @@ You may want to install it in a virtual environment.
 ```shell
 pip install -r requirement.txt
 ```
+
+
+## Usage - CLI
+
+Not all the code is accessible through the CLI.
+The `-m` is to specify the model, and the `-w` is for the 
+number of window per mode.  
+Note that the parameter passed as an example would be the default one 
+if nothing is passed, i.e. not passing `-w` to a RF would set the `-w` to
+2000 internally.
+
+### RF
+
+```shell
+python -m koolnet -m rf -w 2000
+```
+
+### XGBoost
+
+```shell
+python -m koolnet -m xgboost -w 2000
+```
+
+### CNN
+
+```shell
+python -m koolnet -m cnn -w 4000
+```
