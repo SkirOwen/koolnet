@@ -32,6 +32,11 @@ def parse_args() -> Namespace:
 	)
 
 	parser.add_argument(
+		"-w", "--win-per-mode",
+		help="Number of windows per mode to use"
+	)
+
+	parser.add_argument(
 		"-p", "--plot-graph",
 		action="store_true",
 		help="Option to plot results.",
