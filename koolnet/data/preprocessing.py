@@ -2,11 +2,30 @@ import numpy as np
 
 from tqdm import tqdm
 
+from typing import Iterable
+
 from koolnet.utils.file_ops import load_h5
 from koolnet.data.windows import get_data_win_size, get_data_window, gen_window_coord
 
 
 def dist_win_obst(obst_xy: tuple[int, int], win_coords: tuple[int, int, int, int]) -> tuple[int, int]:
+	"""
+	Calculate the relative postion of the obstacle to the window.
+
+	Parameters
+	----------
+	obst_xy : tuple of 2 ints
+		Tuple (x, y) of the position of the obstacle.
+	win_coords : tuples of 4 ints
+		Tuple of the opposite corner of the window.
+		Should be ordered as lowest (x, y) corner followed by the opposite, as:
+		wx0, wy0, wx1, wy1
+
+	Returns
+	-------
+	tuple of 2 ints
+		Tuple of the (dx, dy) coordinates of the obstacle relative to the window.
+	"""
 	x0, y0, _, _ = win_coords
 	dx = obst_xy[0] - x0
 	dy = obst_xy[1] - y0
@@ -87,27 +106,46 @@ def data_window_mode(
 		filepath: str,
 		for_rf: bool,
 		win_per_mode: int,
-		win_size: tuple,
+		win_size: tuple[int, int],
 		window_downstream: bool,
 		mode_collapse: bool = False,
-		augment: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 	"""
+	Generate the data for multiple windows.
+	Per window, extracts the data across all the modes present in the file.
+	Returns the data extracted, the relative position of the obstacle to the window,
+	the coordinates of the windows used, and the array of all the modes present/used.
 
 	Parameters
 	----------
-	filepath
-	for_rf
-	win_per_mode
-	win_size
-	window_downstream
-	mode_collapse : bool,
-		If True collapse sum across all the modes
-	augment
+	filepath : str
+		Filepath to the file to use. Needs to be an h5 file.
+	for_rf : bool
+		If False, return the window as is.
+		Otherwise, flattens it and sums it to get one number per window,
+		to be compatible with decision trees.
+	win_per_mode : int
+		Number of windows to use.
+	win_size : tuple of 2 ints
+		Tuple (l, w) to give the length (l) and width (w) of the window to generate.
+	window_downstream : bool
+		If True, only samples from x bigger than the x position of the obstacle
+		plus three times its radius, i.e. (x >= 3 * radius + obst_pos_x). The default is False.
+	mode_collapse : bool, optional
+		If True collapse sum across all the modes.
 
 	Returns
 	-------
+	tuple of ndarray
+		Corresponding to:
+			- data
+			- relative coordinates of the obstacle to the window
+			- the windows coordinates used
+			- array all the nodes used
 
+	See Also
+	--------
+	gen_window_coord: for more details on the window creation.
 	"""
 	# TODO: Careful this is for one file, of one simulation
 	# TODO: having a way to see the sampled windows
@@ -134,11 +172,7 @@ def data_window_mode(
 		win_data.append(window_coords)
 		wx0, wy0, _, _ = window_coords
 
-		if augment:
-			# TODO: rotate by 90, 180, -90
-			dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
-		else:
-			dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
+		dist_x, dist_y = dist_win_obst(obst_xy, window_coords)
 
 		y_data.append((dist_x, dist_y))
 
