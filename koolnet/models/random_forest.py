@@ -74,6 +74,7 @@ def hyper_param(X_train, y_train, jobs: int = -1):
 
 
 def run_rf_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20):
+	plt.style.use('dark_background')
 	console = Console()
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
@@ -113,7 +114,7 @@ def run_rf_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20):
 	y_train_pred = rf_model.predict(X_train)
 	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training", model_name="RF")
 
-	sns.set_theme()
+	# sns.set_theme()
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
 
 	# Feature importance (impurity)
@@ -144,8 +145,8 @@ def run_rf_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20):
 	plt.show()
 
 	# IoU
-	pred_lst_iou = avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="pred_iou")
-	train_lst_iou = avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="train_iou")
+	pred_lst_iou = avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="rf_pred_iou")
+	train_lst_iou = avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="rf_train_iou")
 
 	pred_avg_iou = sum(pred_lst_iou) / len(pred_lst_iou)
 	train_avg_iou = sum(train_lst_iou) / len(train_lst_iou)

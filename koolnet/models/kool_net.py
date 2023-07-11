@@ -4,6 +4,7 @@ import lightning.pytorch as pl
 import numpy as np
 import torch
 import torch.nn.functional as F
+import matplotlib.pyplot as plt
 import seaborn as sns
 
 from lightning.pytorch.callbacks import ModelCheckpoint
@@ -185,7 +186,7 @@ def run_model(win_per_mode: int = 4000, train: bool = False, mode_for_plots: int
 		model = KoolNet(2 * len(allmode))
 	else:
 		model = KoolNet.load_from_checkpoint(
-			"G:\\PycharmProjects\\ai4er\koolnet\\tb_logs\\lightning_logs\\version_36\\checkpoints\\chk\\epoch=518-val_loss=3.3826.ckpt"
+			"G:\\PycharmProjects\\ai4er\koolnet\\tb_logs\\lightning_logs\\version_39\\checkpoints\\chk\\epoch=519-val_loss=3.8814.ckpt"
 		)
 
 	# Ensure that all operations are deterministic on GPU (if used) for reproducibility
@@ -250,10 +251,14 @@ def run_model(win_per_mode: int = 4000, train: bool = False, mode_for_plots: int
 	)
 
 	logger.info("Starting")
-	# trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+	if train:
+		trainer.fit(model=model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+
 	trainer.test(model=model, dataloaders=test_loader)
 
 	model.eval()
+
+	plt.style.use('dark_background')
 
 	y_pred, w_test = run_predict(koolset_test, model)
 	y_train_pred, w_train = run_predict(koolset_train, model)
@@ -264,19 +269,19 @@ def run_model(win_per_mode: int = 4000, train: bool = False, mode_for_plots: int
 	xi = data[mode_idx]
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 
-	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing", draw_line=False)
+	plot_multiple(xi, w_test, obst_pos, y_pred, title="Testing", draw_line=False, model_name="cnn")
 
-	sns.set_theme()
+	# sns.set_theme()
 	plot_pred_obs_dist(obst_pos, w_test, y_pred)
 	print("Prediction")
-	print(avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="pred_iou"))
+	print(avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="cnn_pred_iou"))
 
 	print("Training")
 	plot_multiple(xi, w_train, obst_pos, y_train_pred, title="Training")
-	print(avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="train_iou"))
+	print(avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="cnn_train_iou"))
 
 	chain_multiple(w_test, model, obst_pos, data, allmode, False)
 
 
 if __name__ == "__main__":
-	run_model()
+	run_model(train=False)

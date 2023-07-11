@@ -38,10 +38,12 @@ def test_boost(boost_model: sklearn.pipeline.Pipelin, X_test: np.ndarray, y_test
 
 
 def run_boost_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20) -> None:
+	plt.style.use('dark_background')
 	console = Console()
 	test_size = 0.2
 	np.random.seed(RANDOM_SEED)
 	filepath = "xi_v3.h5"
+	# filepath = "cylinder_xi_1_50.h5"
 
 	X, y, w, allmode = data_window_mode(
 		filepath=filepath,
@@ -85,11 +87,11 @@ def run_boost_plot_pred(win_per_mode: int = 2000, mode_for_plots: int = 20) -> N
 	plt.savefig("feature_importance.svg", format="svg")
 	plt.show()
 
-	sns.set_theme()
+	# sns.set_theme()
 
 	# IoU
-	pred_lst_iou = avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="pred_iou")
-	train_lst_iou = avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="train_iou")
+	pred_lst_iou = avg_rel_iou(rel_preds=y_pred, obst_pos=obst_pos, win_poss=w_test, filename="xg_pred_iou")
+	train_lst_iou = avg_rel_iou(rel_preds=y_train_pred, obst_pos=obst_pos, win_poss=w_train, filename="xg_train_iou")
 
 	pred_avg_iou = sum(pred_lst_iou) / len(pred_lst_iou)
 	train_avg_iou = sum(train_lst_iou) / len(train_lst_iou)

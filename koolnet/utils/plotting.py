@@ -11,6 +11,7 @@ from matplotlib import pyplot as plt
 from koolnet.utils.file_ops import load_h5
 from koolnet.data.windows import gen_window_coord
 from koolnet.utils.directories import get_plots_dir
+from koolnet.data.preprocessing import dist_win_obst
 
 
 def plot_multiple(
@@ -91,7 +92,7 @@ def plot_multiple(
 	plt.show()
 
 
-def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
+def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice, line: bool = False):
 	wx0, wy0, wx1, wy1 = win_coords
 
 	plot_x, plot_y = data.shape[:2]
@@ -103,7 +104,7 @@ def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
 	d = 2 * obst_r
 	d = 1
 
-	fig, axs = plt.subplots(figsize=(10, 10))
+	fig, axs = plt.subplots(figsize=(10, 6))
 
 	contour_1 = np.linspace(np.min(np.real(data)), np.max(np.real(data)), 21)
 
@@ -132,7 +133,7 @@ def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
 	axs.fill(
 		(np.array([wx0, wx1, wx1, wx0])),
 		(np.array([wy0, wy0, wy1, wy1])),
-		color=(0.7, 0.2, 0.3, 0.65)
+		color=(0.7, 0.2, 0.3, 0.85)
 	)
 
 	scale_pred_x = (wx0 + pred[0])
@@ -144,13 +145,13 @@ def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
 		(obst_r * np.sin(np.arange(0, 2 * np.pi, 0.01))) + scale_pred_y,
 		color=(0.45, 0.23, 0.75, 0.8)
 	)
-
-	# Line
-	axs.fill(
-		(np.array([wx0, wx0 + pred[0]])),
-		(np.array([wy0, wy0 + pred[1]])),
-		color=(0.37, 0.23, 0.17, 0.75)
-	)
+	if line:
+		# Line
+		axs.fill(
+			(np.array([wx0, wx0 + pred[0]])),
+			(np.array([wy0, wy0 + pred[1]])),
+			color=(0.37, 0.83, 0.17, 0.75)
+		)
 
 	print(f"TL Corner: {wx0}, {wy0} ({wy0})")
 	print(f"Absolute pos: {scale_pred_x}, {scale_pred_y}")
@@ -161,7 +162,10 @@ def plot_window(data, win_coords, obst_pos, pred, cmap=cm.cm.ice):
 	axs.set_yticks(np.arange(0, 100, 10))
 	axs.set_aspect('equal')
 	plt.tight_layout()
-	# plt.savefig("./output/plots/fig.svg")
+	plt.savefig(
+		os.path.join(get_plots_dir(), f"one_window_L{int(line)}.png"),
+		dpi=400
+	)
 	plt.show()
 
 
@@ -203,12 +207,11 @@ def plot_pred_obs_dist(obs, win_coors, pred) -> None:
 
 
 def main():
-	data, metadata = load_h5("xi_v2.h5")
-	mode = 18
+	data, metadata = load_h5("cylinder_xi_1_50.h5")
+	mode = 20
 	mode_idx = list(metadata["powers"]).index(mode)
 	xi = data[mode_idx]
 	# xi = (-1j * xi.reshape(100, 400)).T
-	xy = xi.shape[:2]
 
 	obst_pos = metadata["obst_x"], metadata["obst_y"], metadata["obst_r"]
 	# win_coord = [
@@ -218,10 +221,14 @@ def main():
 	# 	obst_pos[1] + obst_pos[2],
 	# ]
 	# print(f"{win_coord = }")
+	xy = data.shape[1::]
+	win_coord = [81+(2*11),  10, 390,  90]
 
-	# win_coord = gen_window_coord(koop_modes_xy=xy, win_size=(10, 10), obst_pos=obst_pos)
+	# win_coord = gen_window_coord(xy_size=xy, win_size=(10, 10), obst_pos=obst_pos, downstream=True)
 	win_coord = [160,  41, 170,  51]
-	plot_window(xi, win_coord, obst_pos, [-79, 12])
+	dist_x, dist_y = dist_win_obst(obst_pos[:2], win_coord)
+
+	plot_window(xi, win_coord, obst_pos, [dist_x, dist_y], cmap=cm.cm.gray, line=True)
 
 
 if __name__ == "__main__":

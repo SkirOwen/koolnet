@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
 from typing import Sequence
+from koolnet.utils.directories import get_plots_dir
 
 
 def iou(pred: Sequence[float, float, float], obst_pos: Sequence[float, float, float]) -> float:
@@ -58,7 +60,9 @@ def avg_rel_iou(rel_preds: Sequence, obst_pos: Sequence, win_poss: Sequence, fil
 	plt.xlabel("IoU")
 	plt.title("Histogram of IoUs")
 	if filename is not None:
-		plt.savefig(f"{filename}.svg", format="svg")
+		plt.savefig(
+			os.path.join(get_plots_dir(), f"{filename}.svg"),
+			format="svg")
 	plt.show()
 	# print(f"Number of non-zero IoU: {len([i for i in lst if i != 0])}")
 	# print(f"Number of zero IoU: {len([i for i in lst if i == 0])}")

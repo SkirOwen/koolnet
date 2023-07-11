@@ -72,6 +72,8 @@ def chain_multiple(windows, model, obst_pos, data, allmodes, for_rf):
 		rslt.append(div_count)
 
 	labels, counts = np.unique(rslt, return_counts=True)
+	print(labels)
+	print(counts)
 	plt.bar(labels, counts, align="center")
 	plt.ylabel("Counts")
 	plt.xlabel("Chain prediction convergence")
